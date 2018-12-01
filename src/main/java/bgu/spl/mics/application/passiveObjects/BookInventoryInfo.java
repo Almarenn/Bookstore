@@ -8,40 +8,46 @@ package bgu.spl.mics.application.passiveObjects;
  */
 public class BookInventoryInfo {
 	private int AmountInInventory;
-	private String BookTitle;
+	private String bookTitle;
 	private int price;
-	
-	/**
-     * Retrieves the title of this book.
-     * <p>
-     * @return The title of this book.   
-     */
-	public String getBookTitle() {
-		return BookTitle;
+
+	public BookInventoryInfo(String name, int price, int amount){
+		this.bookTitle=name;
+		this.price=price;
+		this.AmountInInventory=amount;
 	}
 
 	/**
-     * Retrieves the amount of books of this type in the inventory.
-     * <p>
-     * @return amount of available books.      
-     */
+	 * Retrieves the title of this book.
+	 * <p>
+	 * @return The title of this book.
+	 */
+	public String getBookTitle() {
+		return this.bookTitle;
+	}
+
+	/**
+	 * Retrieves the amount of books of this type in the inventory.
+	 * <p>
+	 * @return amount of available books.
+	 */
 	public int getAmountInInventory() {
 		return AmountInInventory;
 	}
-	
-	
+
+
 	public void setAmountInInventory(int i){
 		AmountInInventory = i;
 	}
 
 	/**
-     * Retrieves the price for  book.
-     * <p>
-     * @return the price of the book.
-     */
+	 * Retrieves the price for  book.
+	 * <p>
+	 * @return the price of the book.
+	 */
 	public int getPrice() {
 		return price;
 	}
-	
-	
+
+
 }

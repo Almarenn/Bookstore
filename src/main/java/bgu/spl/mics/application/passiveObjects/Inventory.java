@@ -18,6 +18,11 @@ public class Inventory {
 	private BookInventoryInfo[] inventory;
 	
 	private Inventory() {}
+
+	//test only method!!
+	public void reset(){
+		this.inventory=null;
+	}
 	/**
      * Retrieves the single instance of this class.
      */
@@ -36,7 +41,7 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (BookInventoryInfo[ ] inventory ) {
-		if(this.inventory.length==0){ //if its the first load
+		if(this.inventory==null){ //if its the first load
 			this.inventory = inventory;
 		}
 		else { //if its not the first load
