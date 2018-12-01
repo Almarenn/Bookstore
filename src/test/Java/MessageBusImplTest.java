@@ -17,6 +17,7 @@ public class MessageBusImplTest {
     ExampleEvent event = new ExampleEvent("sender");
     ExampleBroadcast broadcast = new ExampleBroadcast("sender");
     SellingService seller = new SellingService();
+    
     @Test
     public void subscribeEvent() {
         bus.subscribeEvent(event, seller);
