@@ -16,6 +16,8 @@ public class Inventory {
 
     private static Inventory instance = null;
 	private BookInventoryInfo[] inventory;
+	
+	private Inventory() {}
 	/**
      * Retrieves the single instance of this class.
      */
