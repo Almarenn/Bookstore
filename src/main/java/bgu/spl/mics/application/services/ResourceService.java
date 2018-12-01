@@ -27,10 +27,7 @@ public class ResourceService extends MicroService{
 	protected void initialize() {
 		// TODO Implement this
 	}
-	
-	public Future<> deliver{
-		
-	}
+
 	
 	
 	

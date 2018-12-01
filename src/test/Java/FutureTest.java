@@ -10,7 +10,7 @@ public class FutureTest {
     private Future<String> f;
     @Before
     public void setup(){
-        Future<String> f= new Future<>();
+        f= new Future<>();
     }
 
     @Test
