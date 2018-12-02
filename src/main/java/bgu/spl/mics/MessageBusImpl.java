@@ -9,10 +9,18 @@ import java.util.Queue;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
-	
+
+	private static MessageBusImpl instance = null;
 	private List<MicroService> services; //list of services
 	private List<Queue<Message>> events; //List of queue for messages
 	private List<Broadcast> broadcast; //check if only one or more
+
+	public static MessageBusImpl getInstance() {
+		if(instance == null) {
+			instance = new MessageBusImpl();
+		}
+		return instance;
+	}
 
 	@Override
 	public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
