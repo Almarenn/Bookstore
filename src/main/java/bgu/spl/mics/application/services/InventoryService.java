@@ -39,21 +39,21 @@ public class InventoryService extends MicroService{
 				this.wait();
 			} catch (InterruptedException ignored){}
 		}
-//		for (int i =0; i < queue.size(); i++){
-//			CheckAvailibiltyEvent ev= (CheckAvailibiltyEvent)queue.poll();
-//			subscribeEvent(CheckAvailibiltyEvent,message-> {
-//				int price=(int)inventory.checkAvailabiltyAndGetPrice(ev.getBookName());
-//				if(price!=-1){
-//					complete(CheckAvailibiltyEvent,price);
-//				}
-//				else
-//					complete(CheckAvailibiltyEvent,price);
-//
-//				}
-//			});
-//		}
+		for (int i =0; i < queue.size(); i++){
+			CheckAvailibiltyEvent ev= (CheckAvailibiltyEvent)queue.poll();
+			subscribeEvent(CheckAvailibiltyEvent,message-> {
+				int price=(int)inventory.checkAvailabiltyAndGetPrice(ev.getBookName());
+				if(price!=-1){
+					complete(CheckAvailibiltyEvent,price);
+				}
+				else
+					complete(CheckAvailibiltyEvent,price);
 
-		
-	}
+				}
+			});
+		}
+
+
+}
 
 }

@@ -1,7 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import jdk.incubator.http.internal.common.Pair;
 import java.util.List;
+import java.util.HashMap;
+
 
 /**
  * Passive data-object representing a customer of the store.
@@ -17,9 +18,9 @@ public class Customer {
 	private List<OrderReceipt> receipts;
 	private int creditCard;
 	private int availableAmount;
-	private List<Pair<String,Integer>>  orderSchedule;
+	private HashMap<Integer,String> orderSchedule ;
 
-	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, List<Pair<String, Integer>> orderSchedule){
+	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, HashMap<Integer,String> orderSchedule){
 		this.id=id;
 		this.name=name;
 		this.adress=address;
@@ -89,7 +90,7 @@ public class Customer {
 		}
 	}
 
-	public List<Pair<String,Integer>> getOrderSchedule() {
+	public HashMap<Integer,String>  getOrderSchedule() {
 		return orderSchedule;
 	}
 

@@ -5,12 +5,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
-import jdk.incubator.http.internal.common.Pair;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import java.util.HashMap;
+
 
 /** This is the Main class of the application. You should parse the input file, 
  * create the different instances of the objects, and run the system.
@@ -97,13 +99,12 @@ public class BookStoreRunner {
 			int creditCardNum = (int) creditCard.get("number");
 			int amount = (int)creditCard.get("amount");
 			JSONArray orderScheduleArr =(JSONArray) customerAtIndex.get("orderSchedule");
-			List<Pair<String,Integer>> orderSchedule = new ArrayList<>();
+			HashMap<Integer,String> orderSchedule = new HashMap<>();
 			for(int j = 0 ; j<orderScheduleArr.size(); j++) {
 				JSONObject book = (JSONObject) customersArray.get(i);
 				String bookTitle = (String) book.get("bookTitle");
 				Integer tick = (Integer) book.get("tick");
-				Pair<String, Integer> orderPair = new Pair<>(bookTitle, tick);
-				orderSchedule.add(orderPair);
+				orderSchedule.put(tick,bookTitle);
 			}
 			customersArr[i] = new Customer(id, name, address, distance, creditCardNum,amount, orderSchedule);
 		}
