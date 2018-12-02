@@ -1,7 +1,5 @@
 package bgu.spl.mics.application;
-import bgu.spl.mics.application.passiveObjects.Customer;
-import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
-import bgu.spl.mics.application.passiveObjects.Inventory;
+import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.*;
 import java.io.File;
 import java.io.FileReader;
@@ -11,7 +9,6 @@ import java.util.*;
 import jdk.incubator.http.internal.common.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -60,6 +57,8 @@ public class BookStoreRunner {
 						vehicles[j] = new DeliveryVehicle(license, speed);}
 				}
 			}
+			ResourcesHolder resourcesHolder = ResourcesHolder.getInstance();
+			resourcesHolder.load(vehicles);
 		}
 		JSONObject services = (JSONObject) jsonObject.get("services");
 		JSONObject timeService = (JSONObject) services.get("time");
