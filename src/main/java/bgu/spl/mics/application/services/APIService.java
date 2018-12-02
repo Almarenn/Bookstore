@@ -7,6 +7,7 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
+import jdk.javadoc.internal.doclets.toolkit.util.Utils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,29 +25,37 @@ import java.util.TimerTask;
  */
 public class APIService extends MicroService{
 	private int tick;
-	private List tickOrders;
+	private List<Utils.Pair<String,Integer>> tickOrders;
 
 
 
-	public APIService() {
-		super("Change_This_Name");
-//		this.orders= new LinkedList<Pair>();
-//		for(int i=0;i<orderSchedule.size();i++){
-//			this.orders.add(orderSchedule.get(i));
-//		}
-
-
+	public APIService(String name,List <Utils.Pair<String,Integer>> orders) {
+		super(name);
+		this.tickOrders= new LinkedList<Utils.Pair<String,Integer>>();
+		for(int i=0;i<orders.size();i++){
+			this.tickOrders.add(orders.get(i));
+		}
 	}
 
 	@Override
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, broadcast-> {
 			this.tick=broadcast.get();
-//			if(tick==){
-//				sendEvent(new BookOrderEvent());
-//			}
+			String bookName=findTick(tick);
+			if(bookName!=null){
+//				sendEvent(new BookOrderEvent(bookName));
+			}
 		});
 
 		
+	}
+	//gets a certain tick as a paramter and returns the book name that should be ordered in that tick, if there is one like this
+	private String findTick(int tick){
+		for(int i=0;i<tickOrders.size();i++){
+			if(tickOrders.get(i).second==tick){
+				return tickOrders.get(i).first;
+			}
+		}
+		return null;
 	}
 }
