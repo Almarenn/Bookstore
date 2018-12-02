@@ -83,7 +83,7 @@ public class BookStoreRunner {
 		int numOfResources= (int) services.get("resourcesService");
 		ResourceService[] resourcesArr = new ResourceService[numOfResources];
 		for(int i = 0 ; i<numOfResources; i++) {
-			resourcesArr[i] = new ResourceService();
+			resourcesArr[i] = new ResourceService("resourceService"+i);
 		}
 		JSONArray customersArray = (JSONArray) jsonObject.get("customers");
 		Customer[] customersArr = new Customer[customersArray.size()];

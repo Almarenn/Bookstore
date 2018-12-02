@@ -39,7 +39,7 @@ public class APIService extends MicroService{
 			this.tick=broadcast.get();
 			String bookName=findTick(tick);
 			if(bookName!=null){
-				BookOrderEvent ev=new BookOrderEvent(bookName, );
+				BookOrderEvent ev=new BookOrderEvent(bookName);
 				sendEvent(ev);
 			}
 		});
