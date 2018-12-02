@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 import bgu.spl.mics.application.messages.BookOrderEvent;
@@ -40,7 +41,9 @@ public class APIService extends MicroService{
 			String bookName=findTick(tick);
 			if(bookName!=null){
 				BookOrderEvent ev=new BookOrderEvent(bookName);
-				sendEvent(ev);
+				Future<OrderReceipt> futureObject=sendEvent(ev);
+				OrderReceipt OrderReceipt= futureObject.get();
+				customer.add(OrderReceipt);
 			}
 		});
 

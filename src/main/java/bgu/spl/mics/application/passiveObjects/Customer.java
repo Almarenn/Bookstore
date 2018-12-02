@@ -93,4 +93,8 @@ public class Customer {
 		return orderSchedule;
 	}
 
+	public void add(OrderReceipt orderReceipt){
+		this.receipts.add(orderReceipt);
+	}
+
 }
