@@ -3,11 +3,8 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 import bgu.spl.mics.application.messages.BookOrderEvent;
-import bgu.spl.mics.application.passiveObjects.Inventory;
-import bgu.spl.mics.application.passiveObjects.MoneyRegister;
-import bgu.spl.mics.application.passiveObjects.OrderReceipt;
-import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
-import jdk.javadoc.internal.doclets.toolkit.util.Utils;
+import bgu.spl.mics.application.passiveObjects.*;
+import jdk.incubator.http.internal.common.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,16 +22,15 @@ import java.util.TimerTask;
  */
 public class APIService extends MicroService{
 	private int tick;
-	private List<Utils.Pair<String,Integer>> tickOrders;
+	private List<Pair<String,Integer>> tickOrders;
+	private Customer customer;
 
 
 
-	public APIService(String name,List <Utils.Pair<String,Integer>> orders) {
+	public APIService(String name,Customer customer) {
 		super(name);
-		this.tickOrders= new LinkedList<Utils.Pair<String,Integer>>();
-		for(int i=0;i<orders.size();i++){
-			this.tickOrders.add(orders.get(i));
-		}
+		this.customer=customer;
+		this.tickOrders= customer.getOrderSchedule();
 	}
 
 	@Override
@@ -43,7 +39,8 @@ public class APIService extends MicroService{
 			this.tick=broadcast.get();
 			String bookName=findTick(tick);
 			if(bookName!=null){
-//				sendEvent(new BookOrderEvent(bookName));
+				BookOrderEvent ev=new BookOrderEvent(bookName, );
+				sendEvent(ev);
 			}
 		});
 

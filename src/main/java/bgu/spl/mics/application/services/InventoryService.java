@@ -1,6 +1,10 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
+
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * InventoryService is in charge of the book inventory and stock.
@@ -14,9 +18,11 @@ import bgu.spl.mics.MicroService;
 
 public class InventoryService extends MicroService{
 
-	public InventoryService() {
-		super("Change_This_Name");
-		// TODO Implement this
+	private Queue<Message> queue;
+
+	public InventoryService(String name) {
+		super(name);
+		queue = new Queue
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package bgu.spl.mics;
 
 import java.util.List;
+import java.util.Queue;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -9,8 +10,8 @@ import java.util.List;
  */
 public class MessageBusImpl implements MessageBus {
 	
-	private List<MicroService> services;
-	private List<Event> events;
+	private List<MicroService> services; //list of services
+	private List<Queue<Message>> events; //List of queue for messages
 	private List<Broadcast> broadcast; //check if only one or more
 
 	@Override
