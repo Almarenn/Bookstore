@@ -1,6 +1,9 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.CheckAvailibiltyEvent;
+import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 
 /**
  * Selling service in charge of taking orders from customers.
@@ -13,15 +16,18 @@ import bgu.spl.mics.MicroService;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class SellingService extends MicroService{
+	private MoneyRegister moneyRegister;
 
-	public SellingService() {
-		super("Change_This_Name");
-		// TODO Implement this
+	public SellingService(String name) {
+		super(name);
+		moneyRegister= MoneyRegister.getInstance();
+
 	}
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
+
+		Future<int> price= sendEvent(new CheckAvailibiltyEvent(*bookname*));
 		
 	}
 

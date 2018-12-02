@@ -2,7 +2,11 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
+import bgu.spl.mics.application.passiveObjects.Inventory;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -19,15 +23,33 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class InventoryService extends MicroService{
 
 	private Queue<Message> queue;
+	private Inventory inventory;
 
 	public InventoryService(String name) {
 		super(name);
-		queue = new Queue
+		this.inventory= Inventory.getInstance();
+		queue = new LinkedList<Message>();
 	}
 
 	@Override
 	protected void initialize() {
-		// TODO Implement this
+		while(queue.isEmpty()){
+			try{
+				this.wait();
+			} catch (InterruptedException ignored){}
+		}
+		for (int i =0; i < queue.size(); i++){
+			subscribeEvent(queue.poll(),message-> {
+				if(inventory.checkAvailabiltyAndGetPrice(queue.poll().getbook())!=-1){
+					return true;
+				}
+				else
+					return false;
+
+				}
+			});
+		}
+
 		
 	}
 
