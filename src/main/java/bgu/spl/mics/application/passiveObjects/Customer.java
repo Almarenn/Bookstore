@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import jdk.incubator.http.internal.common.Pair;
-
 import java.util.List;
 
 /**
@@ -20,13 +19,14 @@ public class Customer {
 	private int availableAmount;
 	private List<Pair<String,Integer>>  orderSchedule;
 
-	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount){
+	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, List<Pair<String, Integer>> orderSchedule){
 		this.id=id;
 		this.name=name;
 		this.adress=address;
 		this.distance=distance;
 		creditCard = creditCardNum;
 		availableAmount=amount;
+		this.orderSchedule = orderSchedule;
 	}
 	
 	/**

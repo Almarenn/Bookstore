@@ -16,10 +16,9 @@ public class ResourceService extends MicroService{
 	
 	private ResourcesHolder r;
 
-	public ResourceService() {
-		super("Change_This_Name");
+	public ResourceService(String name) {
+		super(name);
 		this.r= ResourcesHolder.getInstance();
-		// TODO Implement this
 	}
 	
 	//signing for events and broadcasts

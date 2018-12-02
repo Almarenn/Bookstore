@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.*;
+import jdk.incubator.http.internal.common.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
@@ -63,7 +65,7 @@ public class BookStoreRunner {
 		JSONObject timeService = (JSONObject) services.get("time");
 		int speed = (int)timeService.get("speed");
 		int duration = (int)timeService.get("duration");
-		TimeService tService = new TimeService(speed, duration);
+		TimeService tService = new TimeService("timeService",speed, duration);
 		int numOfSelling = (int) services.get("selling");
 		SellingService[] sellingArr = new SellingService[numOfSelling];
 		for(int i = 0 ; i<numOfSelling; i++) {
@@ -72,7 +74,7 @@ public class BookStoreRunner {
 		int numOfInventory = (int) services.get("inventoryService");
 		InventoryService[] inventoryArr = new InventoryService[numOfInventory];
 		for(int i = 0; i<numOfInventory; i++){
-				inventoryArr[i] = new InventoryService();
+				inventoryArr[i] = new InventoryService("inventoryService"+i);
 		}
 		int numOfLogistic= (int) services.get("logistics");
 		LogisticsService[] logisticArr = new LogisticsService[numOfLogistic];
@@ -89,16 +91,22 @@ public class BookStoreRunner {
 		for(int i = 0 ; i<customersArray.size(); i++) {
 			JSONObject customerAtIndex = (JSONObject) customersArray.get(i);
 			int id = (int)customerAtIndex.get("id");
-			String name = (String)customerAtIndex.get(name);
+			String name = (String)customerAtIndex.get("name");
 			String address = (String)customerAtIndex.get("address");
 			int distance = (int)customerAtIndex.get("distance");
 			JSONObject creditCard =(JSONObject) customerAtIndex.get("creditCard");
 			int creditCardNum = (int) creditCard.get("number");
-			int amount = (int)creditCard.get(amount);
-			customersArr[i] = new Customer(id, name, address, distance, creditCardNum,amount );
+			int amount = (int)creditCard.get("amount");
+			JSONArray orderScheduleArr =(JSONArray) customerAtIndex.get("orderSchedule");
+			List<Pair<String,Integer>> orderSchedule = new ArrayList<>();
+			for(int j = 0 ; j<orderScheduleArr.size(); j++) {
+				JSONObject book = (JSONObject) customersArray.get(i);
+				String bookTitle = (String) book.get("bookTitle");
+				Integer tick = (Integer) book.get("tick");
+				Pair<String, Integer> orderPair = new Pair<>(bookTitle, tick);
+				orderSchedule.add(orderPair);
+			}
+			customersArr[i] = new Customer(id, name, address, distance, creditCardNum,amount, orderSchedule);
 		}
-
-
-
 	}
 }
