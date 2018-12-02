@@ -68,9 +68,10 @@ public class Future<T> {
      *         elapsed, return null.
      */
 	public T get(long timeout, TimeUnit unit) {
+		long time=unit.convert(timeout,TimeUnit.MILLISECONDS);
 		if (!completed) {
 			try {
-				this.wait(timeout);} catch (InterruptedException e){}
+				this.wait(time);} catch (InterruptedException e){}
 		}
 		return result;
 	}

@@ -8,4 +8,8 @@ public class CheckAvailibiltyEvent implements Event {
     public CheckAvailibiltyEvent(String bookName){
         this.bookName=bookName;
     }
+
+    public String getBookName(){
+        return this.bookName;
+    }
 }

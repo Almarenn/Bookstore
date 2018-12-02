@@ -3,19 +3,15 @@ package bgu.spl.mics.application.messages;
 import bgu.spl.mics.Event;
 import bgu.spl.mics.application.passiveObjects.Customer;
 
-public class BookOrderEvent implements Event{
-    private Customer customer;
+public class BookOrderEvent implements Event {
     private String bookName;
 
-    public BookOrderEvent(String name, Customer c){
-        this.bookName=name;
-        this.customer=c;
+    public BookOrderEvent(String name) {
+        this.bookName = name;
     }
 
-
-    public Customer getCustomer(){
-        return this.customer;
+    public String getBookName(){
+        return this.bookName;
     }
-
-
 }
+

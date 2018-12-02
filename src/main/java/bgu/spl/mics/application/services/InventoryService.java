@@ -2,6 +2,7 @@ package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.CheckAvailibiltyEvent;
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 
@@ -38,17 +39,19 @@ public class InventoryService extends MicroService{
 				this.wait();
 			} catch (InterruptedException ignored){}
 		}
-		for (int i =0; i < queue.size(); i++){
-			subscribeEvent(queue.poll(),message-> {
-				if(inventory.checkAvailabiltyAndGetPrice(queue.poll().getbook())!=-1){
-					return true;
-				}
-				else
-					return false;
-
-				}
-			});
-		}
+//		for (int i =0; i < queue.size(); i++){
+//			CheckAvailibiltyEvent ev= (CheckAvailibiltyEvent)queue.poll();
+//			subscribeEvent(CheckAvailibiltyEvent,message-> {
+//				int price=(int)inventory.checkAvailabiltyAndGetPrice(ev.getBookName());
+//				if(price!=-1){
+//					complete(CheckAvailibiltyEvent,price);
+//				}
+//				else
+//					complete(CheckAvailibiltyEvent,price);
+//
+//				}
+//			});
+//		}
 
 		
 	}
