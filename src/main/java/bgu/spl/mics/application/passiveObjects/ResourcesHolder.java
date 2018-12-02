@@ -36,7 +36,7 @@ public class ResourcesHolder {
 		Future<DeliveryVehicle> vehicle= new Future<DeliveryVehicle>();
 		boolean found=false;
 		while (!found) {
-			for(int i=0;i<this.vehiclesAvailable.length &&!found;i++) {
+			for(int i=0;i<this.vehiclesAvailable.length && !found; i++) {
 				if(this.vehiclesAvailable[i]==true) {
 					found=true;
 					this.vehiclesAvailable[i]=false;

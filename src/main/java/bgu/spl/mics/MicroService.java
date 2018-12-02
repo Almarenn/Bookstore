@@ -20,6 +20,7 @@ package bgu.spl.mics;
  */
 public abstract class MicroService implements Runnable {
 
+    private MessageBusImpl bus;
     private boolean terminated = false;
     private final String name;
 
@@ -29,6 +30,7 @@ public abstract class MicroService implements Runnable {
      */
     public MicroService(String name) {
         this.name = name;
+        bus = MessageBusImpl.getInstance();
     }
 
     /**

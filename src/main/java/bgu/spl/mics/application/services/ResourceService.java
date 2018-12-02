@@ -1,6 +1,9 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
+import bgu.spl.mics.application.messages.checkVehicleAvailabilityEvent;
+import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
 /**
@@ -24,7 +27,9 @@ public class ResourceService extends MicroService{
 	//signing for events and broadcasts
 	@Override
 	protected void initialize() {
-		// TODO Implement this
+		subscribeEvent(checkVehicleAvailabilityEvent.class, event->{
+			Future<DeliveryVehicle> f = r.acquireVehicle();
+		} );
 	}
 
 	
