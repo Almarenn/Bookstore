@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 import jdk.incubator.http.internal.common.Pair;
-
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
@@ -76,7 +74,7 @@ public class BookStoreRunner {
 		int numOfInventory = (int) services.get("inventoryService");
 		InventoryService[] inventoryArr = new InventoryService[numOfInventory];
 		for(int i = 0; i<numOfInventory; i++){
-				inventoryArr[i] = new InventoryService();
+				inventoryArr[i] = new InventoryService("inventoryService"+i);
 		}
 		int numOfLogistic= (int) services.get("logistics");
 		LogisticsService[] logisticArr = new LogisticsService[numOfLogistic];
