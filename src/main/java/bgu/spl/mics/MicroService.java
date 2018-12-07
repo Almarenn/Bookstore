@@ -28,7 +28,7 @@ public abstract class MicroService implements Runnable {
     private final String name;
     private ConcurrentHashMap<Class<? extends Event>, Callback> callBackForEvent;
     private ConcurrentHashMap<Class<? extends Broadcast>, Callback> callBackForBroadcast;
-    private LinkedBlockingQueue<Class<? extends Message> > messagessQueue;
+    private LinkedBlockingQueue<Class<? extends Message> > messagesQueue;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -39,7 +39,7 @@ public abstract class MicroService implements Runnable {
         bus = MessageBusImpl.getInstance();
         callBackForEvent = new ConcurrentHashMap<>();
         callBackForBroadcast = new ConcurrentHashMap<>();
-        messagessQueue = new LinkedBlockingQueue<>();
+        messagesQueue = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -168,15 +168,19 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         initialize();
         while (!terminated) {
-            messagessQueue.
-
-
-
-
-
-
-
+            Class<? extends Message> m = null;
+            try {
+                m = messagesQueue.take();
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+            String typeOfMessage =  m.getClass().getName();
+            if(typeOfMessage.equals("Event") ) {
+                callBackForEvent.get(m).call(m);
+            }
+            if(typeOfMessage.equals("Broadcast")){
+                callBackForBroadcast.get(m).call(m);
+            }
         }
     }
-
 }
