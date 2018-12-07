@@ -72,7 +72,7 @@ public class BookStoreRunner {
 		int numOfInventory = (int) services.get("inventoryService");
 		InventoryService[] inventoryArr = new InventoryService[numOfInventory];
 		for(int i = 0; i<numOfInventory; i++){
-				inventoryArr[i] = new InventoryService("inventoryService"+i);
+			inventoryArr[i] = new InventoryService("inventoryService"+i);
 		}
 		int numOfLogistic= (int) services.get("logistics");
 		LogisticsService[] logisticArr = new LogisticsService[numOfLogistic];

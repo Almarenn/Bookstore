@@ -1,7 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import jdk.incubator.http.internal.common.Pair;
 import java.util.List;
+import java.util.HashMap;
+
 
 /**
  * Passive data-object representing a customer of the store.
@@ -17,9 +18,9 @@ public class Customer {
 	private List<OrderReceipt> receipts;
 	private int creditCard;
 	private int availableAmount;
-	private List<Pair<String,Integer>>  orderSchedule;
+	private HashMap<Integer,String> orderSchedule ;
 
-	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, List<Pair<String, Integer>> orderSchedule){
+	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, HashMap<Integer,String> orderSchedule){
 		this.id=id;
 		this.name=name;
 		this.adress=address;
@@ -28,68 +29,68 @@ public class Customer {
 		availableAmount=amount;
 		this.orderSchedule = orderSchedule;
 	}
-	
+
 	/**
-     * Retrieves the name of the customer.
-     */
+	 * Retrieves the name of the customer.
+	 */
 	public String getName() {
 		return name;
 	}
 
 	/**
-     * Retrieves the ID of the customer  . 
-     */
+	 * Retrieves the ID of the customer  .
+	 */
 	public int getId() {
 		return id;
 	}
-	
+
 	/**
-     * Retrieves the address of the customer.  
-     */
+	 * Retrieves the address of the customer.
+	 */
 	public String getAddress() {
 		return adress;
 	}
-	
+
 	/**
-     * Retrieves the distance of the customer from the store.  
-     */
+	 * Retrieves the distance of the customer from the store.
+	 */
 	public int getDistance() {
 		return distance;
 	}
 
-	
+
 	/**
-     * Retrieves a list of receipts for the purchases this customer has made.
-     * <p>
-     * @return A list of receipts.
-     */
+	 * Retrieves a list of receipts for the purchases this customer has made.
+	 * <p>
+	 * @return A list of receipts.
+	 */
 	public List<OrderReceipt> getCustomerReceiptList() {
 		return receipts;
 	}
-	
+
 	/**
-     * Retrieves the amount of money left on this customers credit card.
-     * <p>
-     * @return Amount of money left.   
-     */
+	 * Retrieves the amount of money left on this customers credit card.
+	 * <p>
+	 * @return Amount of money left.
+	 */
 	public int getAvailableCreditAmount() {
 		return availableAmount;
 	}
-	
+
 	/**
-     * Retrieves this customers credit card serial number.    
-     */
+	 * Retrieves this customers credit card serial number.
+	 */
 	public int getCreditNumber() {
 		return creditCard;
 	}
-	
+
 	public void pay(int i) {
 		if(i>=availableAmount) {
 			availableAmount = availableAmount-i;
 		}
 	}
 
-	public List<Pair<String,Integer>> getOrderSchedule() {
+	public HashMap<Integer,String>  getOrderSchedule() {
 		return orderSchedule;
 	}
 
