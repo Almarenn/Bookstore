@@ -1,7 +1,6 @@
 package bgu.spl.mics;
 
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -26,8 +25,8 @@ public abstract class MicroService implements Runnable {
     private MessageBusImpl bus;
     private boolean terminated = false;
     private final String name;
-    private ConcurrentHashMap<Class<? extends Message>, Callback> MessageToCallBack;
-    private LinkedBlockingQueue<Class<? extends Message> > messagesQueue;
+    private ConcurrentHashMap<Class<? extends Event>, Callback> callBackForEvent;
+    private ConcurrentHashMap<Class<? extends Broadcast>, Callback> callBackForBroadcast;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -36,8 +35,8 @@ public abstract class MicroService implements Runnable {
     public MicroService(String name) {
         this.name = name;
         bus = MessageBusImpl.getInstance();
-        MessageToCallBack = new ConcurrentHashMap<>();
-        messagesQueue = new LinkedBlockingQueue<>();
+        callBackForEvent = new ConcurrentHashMap<>();
+        callBackForBroadcast = new ConcurrentHashMap<>();
     }
 
     /**
@@ -63,7 +62,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
         bus.subscribeEvent(type,this);
-        MessageToCallBack.put(type, callback);
+        callBackForEvent.put(type, callback);
     }
 
     /**
@@ -88,7 +87,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
         bus.subscribeBroadcast(type,this);
-        MessageToCallBack.put(type, callback);
+        callBackForBroadcast.put(type, callback);
     }
 
     /**
@@ -166,15 +165,19 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         initialize();
         while (!terminated) {
+            Message m = null;
             try {
-
-                Message m = bus.awaitMessage(this);
-                MessageToCallBack.get(m.getClass()).call(m);
+                m = bus.awaitMessage(this);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
-
-
+            String typeOfMessage =  m.getClass().getName();
+            if(typeOfMessage.equals("Event") ) {
+                callBackForEvent.get(m).call(m);
+            }
+            if(typeOfMessage.equals("Broadcast")){
+                callBackForBroadcast.get(m).call(m);
+            }
         }
     }
 }

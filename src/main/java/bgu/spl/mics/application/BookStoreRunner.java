@@ -17,7 +17,6 @@ import java.util.HashMap;
  */
 public class BookStoreRunner {
 	public static void main(String[] args) {
-
 		File jsonFile = Paths.get("path").toFile();
 		JSONObject jsonObject = null;
 		JSONParser parser = new JSONParser();
@@ -88,22 +87,26 @@ public class BookStoreRunner {
 		Customer[] customersArr = new Customer[customersArray.size()];
 		for(int i = 0 ; i<customersArray.size(); i++) {
 			JSONObject customerAtIndex = (JSONObject) customersArray.get(i);
-			int id = (int)customerAtIndex.get("id");
-			String name = (String)customerAtIndex.get("name");
-			String address = (String)customerAtIndex.get("address");
-			int distance = (int)customerAtIndex.get("distance");
-			JSONObject creditCard =(JSONObject) customerAtIndex.get("creditCard");
+			int id = (int) customerAtIndex.get("id");
+			String name = (String) customerAtIndex.get("name");
+			String address = (String) customerAtIndex.get("address");
+			int distance = (int) customerAtIndex.get("distance");
+			JSONObject creditCard = (JSONObject) customerAtIndex.get("creditCard");
 			int creditCardNum = (int) creditCard.get("number");
-			int amount = (int)creditCard.get("amount");
-			JSONArray orderScheduleArr =(JSONArray) customerAtIndex.get("orderSchedule");
-			HashMap<Integer,String> orderSchedule = new HashMap<>();
-			for(int j = 0 ; j<orderScheduleArr.size(); j++) {
+			int amount = (int) creditCard.get("amount");
+			JSONArray orderScheduleArr = (JSONArray) customerAtIndex.get("orderSchedule");
+			HashMap<Integer, String> orderSchedule = new HashMap<>();
+			for (int j = 0; j < orderScheduleArr.size(); j++) {
 				JSONObject book = (JSONObject) customersArray.get(i);
 				String bookTitle = (String) book.get("bookTitle");
 				Integer tick = (Integer) book.get("tick");
-				orderSchedule.put(tick,bookTitle);
+				orderSchedule.put(tick, bookTitle);
 			}
-			customersArr[i] = new Customer(id, name, address, distance, creditCardNum,amount, orderSchedule);
+			customersArr[i] = new Customer(id, name, address, distance, creditCardNum, amount, orderSchedule);
+		}
+		APIService[] APIArr = new APIService[customersArr.length];
+		for(int i=0; i<APIArr.length; i++){
+			APIArr[i] = new APIService("APIService"+i,customersArr[i] );
 		}
 	}
 }

@@ -80,7 +80,7 @@ public class Inventory {
      * @param book 		Name of the book.
      * @return the price of the book if it is available, -1 otherwise.
      */
-	public int checkAvailabiltyAndGetPrice(String book) {
+	public int checkAvailabilityAndGetPrice(String book) {
 		BookInventoryInfo b = checkAvailability(book);
 		if(b==null){
 			return -1;

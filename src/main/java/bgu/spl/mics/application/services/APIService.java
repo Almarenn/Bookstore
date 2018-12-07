@@ -41,7 +41,7 @@ public class APIService extends MicroService{
 				BookOrderEvent ev=new BookOrderEvent(bookName);
 				Future<OrderReceipt> futureObject=sendEvent(ev);
 				OrderReceipt OrderReceipt= futureObject.get();
-				customer.add(OrderReceipt);
+				customer.addReceipt(OrderReceipt);
 			}
 		});
 

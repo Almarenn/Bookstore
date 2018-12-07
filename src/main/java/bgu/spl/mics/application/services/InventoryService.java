@@ -42,7 +42,7 @@ public class InventoryService extends MicroService{
 //		for (int i =0; i < queue.size(); i++){
 //			CheckAvailibiltyEvent ev= (CheckAvailibiltyEvent)queue.poll();
 //			subscribeEvent(CheckAvailibiltyEvent,message-> {
-//				int price=(int)inventory.checkAvailabiltyAndGetPrice(ev.getBookName());
+//				int price=(int)inventory.checkAvailabilityAndGetPrice(ev.getBookName());
 //				if(price!=-1){
 //					complete(CheckAvailibiltyEvent,price);
 //				}
@@ -51,9 +51,9 @@ public class InventoryService extends MicroService{
 //
 //				}
 //			});
-//		}
+		}
 
 		
 	}
 
-}
+
