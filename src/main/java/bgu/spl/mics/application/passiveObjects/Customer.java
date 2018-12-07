@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
@@ -13,7 +14,7 @@ import java.util.HashMap;
 public class Customer {
 	private int id;
 	private String name;
-	private String adress;
+	private String address;
 	private int distance;
 	private List<OrderReceipt> receipts;
 	private int creditCard;
@@ -23,11 +24,13 @@ public class Customer {
 	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, HashMap<Integer,String> orderSchedule){
 		this.id=id;
 		this.name=name;
-		this.adress=address;
+		this.address=address;
 		this.distance=distance;
+		receipts = new ArrayList<>();
 		creditCard = creditCardNum;
 		availableAmount=amount;
 		this.orderSchedule = orderSchedule;
+
 	}
 
 	/**
@@ -48,7 +51,7 @@ public class Customer {
 	 * Retrieves the address of the customer.
 	 */
 	public String getAddress() {
-		return adress;
+		return address;
 	}
 
 	/**
@@ -94,7 +97,7 @@ public class Customer {
 		return orderSchedule;
 	}
 
-	public void add(OrderReceipt orderReceipt){
+	public void addReceipt(OrderReceipt orderReceipt){
 		this.receipts.add(orderReceipt);
 	}
 

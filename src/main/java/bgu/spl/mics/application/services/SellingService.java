@@ -40,13 +40,13 @@ public class SellingService extends MicroService{
 				this.wait();
 			} catch (InterruptedException ignored){}
 		}
-		for (int i =0; i < queue.size(); i++){
-			BookOrderEvent bookOrder= (BookOrderEvent)queue.poll();
-			subscribeEvent(bookOrder,message-> {
-				CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(bookOrder.getBookName());
-				Future<Integer> price= (Future<Integer>)sendEvent(ev);
-
-	}
+//		for (int i =0; i < queue.size(); i++){
+//			BookOrderEvent bookOrder= (BookOrderEvent)queue.poll();
+//			subscribeEvent(bookOrder,message-> {
+//				CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(bookOrder.getBookName());
+//				Future<Integer> price= (Future<Integer>)sendEvent(ev);
+//
+//	}
 		}
 	}
-}
+
