@@ -5,24 +5,23 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 import bgu.spl.mics.application.messages.BookOrderEvent;
 import bgu.spl.mics.application.passiveObjects.*;
-import jdk.incubator.http.internal.common.Pair;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * APIService is in charge of the connection between a client and the store.
  * It informs the store about desired purchases using {@link BookOrderEvent}.
  * This class may not hold references for objects which it is not responsible for:
  * {@link ResourcesHolder}, {@link MoneyRegister}, {@link Inventory}.
- *
+ * 
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class APIService extends MicroService{
 	private int tick;
-	private List<Pair<String,Integer>> tickOrders;
+	private HashMap<Integer,String> tickOrders;
 	private Customer customer;
 
 
@@ -46,13 +45,17 @@ public class APIService extends MicroService{
 			}
 		});
 
-
+		
 	}
 	//gets a certain tick as a paramter and returns the book name that should be ordered in that tick, if there is one like this
 	private String findTick(int tick){
-		for(int i=0;i<tickOrders.size();i++){
-			if(tickOrders.get(i).second==tick){
-				return tickOrders.get(i).first;
+
+		Set set = tickOrders.entrySet();
+		Iterator iterator = set.iterator();
+		while(iterator.hasNext()) {
+			Map.Entry mentry = (Map.Entry)iterator.next();
+			if ((int)mentry.getKey()==tick){
+				return (String)mentry.getValue();
 			}
 		}
 		return null;
