@@ -5,14 +5,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.*;
-import jdk.incubator.http.internal.common.Pair;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import java.util.HashMap;
 
-/** This is the Main class of the application. You should parse the input file, 
+/** This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
  * In the end, you should output serialized objects.
  */
@@ -68,7 +67,7 @@ public class BookStoreRunner {
 		int numOfSelling = (int) services.get("selling");
 		SellingService[] sellingArr = new SellingService[numOfSelling];
 		for(int i = 0 ; i<numOfSelling; i++) {
-			sellingArr[i] = new SellingService();
+			sellingArr[i] = new SellingService("sellingService"+i);
 		}
 		int numOfInventory = (int) services.get("inventoryService");
 		InventoryService[] inventoryArr = new InventoryService[numOfInventory];
@@ -83,7 +82,7 @@ public class BookStoreRunner {
 		int numOfResources= (int) services.get("resourcesService");
 		ResourceService[] resourcesArr = new ResourceService[numOfResources];
 		for(int i = 0 ; i<numOfResources; i++) {
-			resourcesArr[i] = new ResourceService();
+			resourcesArr[i] = new ResourceService("resourceService"+i);
 		}
 		JSONArray customersArray = (JSONArray) jsonObject.get("customers");
 		Customer[] customersArr = new Customer[customersArray.size()];
@@ -97,13 +96,12 @@ public class BookStoreRunner {
 			int creditCardNum = (int) creditCard.get("number");
 			int amount = (int)creditCard.get("amount");
 			JSONArray orderScheduleArr =(JSONArray) customerAtIndex.get("orderSchedule");
-			List<Pair<String,Integer>> orderSchedule = new ArrayList<>();
+			HashMap<Integer,String> orderSchedule = new HashMap<>();
 			for(int j = 0 ; j<orderScheduleArr.size(); j++) {
 				JSONObject book = (JSONObject) customersArray.get(i);
 				String bookTitle = (String) book.get("bookTitle");
 				Integer tick = (Integer) book.get("tick");
-				Pair<String, Integer> orderPair = new Pair<>(bookTitle, tick);
-				orderSchedule.add(orderPair);
+				orderSchedule.put(tick,bookTitle);
 			}
 			customersArr[i] = new Customer(id, name, address, distance, creditCardNum,amount, orderSchedule);
 		}
