@@ -35,18 +35,18 @@ public class SellingService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		while(queue.isEmpty()){
-			try{
-				this.wait();
-			} catch (InterruptedException ignored){}
-		}
-		for (int i =0; i < queue.size(); i++){
-			BookOrderEvent bookOrder= (BookOrderEvent)queue.poll();
-			subscribeEvent(bookOrder,message-> {
-				CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(bookOrder.getBookName());
-				Future<Integer> price= (Future<Integer>)sendEvent(ev);
-
-	}
-		}
+//		while(queue.isEmpty()){
+//			try{
+//				this.wait();
+//			} catch (InterruptedException ignored){}
+//		}
+//		for (int i =0; i < queue.size(); i++){
+//			BookOrderEvent bookOrder= (BookOrderEvent)queue.poll();
+//			subscribeEvent(bookOrder,message-> {
+//				CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(bookOrder.getBookName());
+//				Future<Integer> price= (Future<Integer>)sendEvent(ev);
+//
+//	}
+//		}
 	}
 }

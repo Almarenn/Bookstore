@@ -26,8 +26,7 @@ public abstract class MicroService implements Runnable {
     private MessageBusImpl bus;
     private boolean terminated = false;
     private final String name;
-    private ConcurrentHashMap<Class<? extends Event>, Callback> callBackForEvent;
-    private ConcurrentHashMap<Class<? extends Broadcast>, Callback> callBackForBroadcast;
+    private ConcurrentHashMap<Class<? extends Message>, Callback> MessageToCallBack;
     private LinkedBlockingQueue<Class<? extends Message> > messagesQueue;
 
     /**
@@ -37,8 +36,7 @@ public abstract class MicroService implements Runnable {
     public MicroService(String name) {
         this.name = name;
         bus = MessageBusImpl.getInstance();
-        callBackForEvent = new ConcurrentHashMap<>();
-        callBackForBroadcast = new ConcurrentHashMap<>();
+        MessageToCallBack = new ConcurrentHashMap<>();
         messagesQueue = new LinkedBlockingQueue<>();
     }
 
@@ -65,7 +63,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
         bus.subscribeEvent(type,this);
-        callBackForEvent.put(type, callback);
+        MessageToCallBack.put(type, callback);
     }
 
     /**
@@ -90,7 +88,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
         bus.subscribeBroadcast(type,this);
-        callBackForBroadcast.put(type, callback);
+        MessageToCallBack.put(type, callback);
     }
 
     /**
@@ -168,19 +166,15 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         initialize();
         while (!terminated) {
-            Class<? extends Message> m = null;
             try {
-                m = messagesQueue.take();
+
+                Message m = bus.awaitMessage(this);
+                MessageToCallBack.get(m.getClass()).call(m);
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
-            String typeOfMessage =  m.getClass().getName();
-            if(typeOfMessage.equals("Event") ) {
-                callBackForEvent.get(m).call(m);
-            }
-            if(typeOfMessage.equals("Broadcast")){
-                callBackForBroadcast.get(m).call(m);
-            }
+
+
         }
     }
 }
