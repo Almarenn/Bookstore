@@ -28,7 +28,7 @@ public abstract class MicroService implements Runnable {
     private final String name;
     private ConcurrentHashMap<Class<? extends Event>, Callback> callBackForEvent;
     private ConcurrentHashMap<Class<? extends Broadcast>, Callback> callBackForBroadcast;
-    private LinkedBlockingQueue<Class<? extends Event> > eventsQueue;
+    private LinkedBlockingQueue<Class<? extends Message> > messagessQueue;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -39,7 +39,7 @@ public abstract class MicroService implements Runnable {
         bus = MessageBusImpl.getInstance();
         callBackForEvent = new ConcurrentHashMap<>();
         callBackForBroadcast = new ConcurrentHashMap<>();
-        eventsQueue = new LinkedBlockingQueue<>();
+        messagessQueue = new LinkedBlockingQueue<>();
     }
 
     /**
@@ -106,9 +106,13 @@ public abstract class MicroService implements Runnable {
      * 	       			null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
-        bus.sendEvent(e);
-        //TODO: implement this.
-        return null; //TODO: delete this line :)
+        if(bus.sendEvent(e)==null){
+            return null;
+        }
+        else {
+            Future<T> f = bus.sendEvent(e);
+            return f;
+        }
     }
 
     /**
@@ -118,7 +122,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-        //TODO: implement this.
+        bus.sendBroadcast(b);
     }
 
     /**
@@ -132,7 +136,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) {
-        //TODO: implement this.
+        bus.complete(e, result);
     }
 
     /**
@@ -164,7 +168,14 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         initialize();
         while (!terminated) {
-            System.out.println("NOT IMPLEMENTED!!!"); //TODO: you should delete this line :)
+            messagessQueue.
+
+
+
+
+
+
+
         }
     }
 
