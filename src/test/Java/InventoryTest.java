@@ -44,7 +44,7 @@ public class InventoryTest {
     @Test
     public void checkAvailabiltyAndGetPrice() throws Exception {
         this.inventory.load(bookInventory);
-        assertTrue("the function doesn't return the book price",this.inventory.checkAvailabiltyAndGetPrice(b.getBookTitle())==(b.getPrice()));
+        assertTrue("the function doesn't return the book price",this.inventory.checkAvailabilityAndGetPrice(b.getBookTitle())==(b.getPrice()));
     }
 
     @After
