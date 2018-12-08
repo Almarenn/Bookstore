@@ -75,5 +75,4 @@ public class OrderReceipt {
 	public int getProcessTick() {
 		return proccessTick;
 	}
-
 }

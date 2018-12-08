@@ -48,6 +48,4 @@ public class BookInventoryInfo {
 	public int getPrice() {
 		return price;
 	}
-
-
 }

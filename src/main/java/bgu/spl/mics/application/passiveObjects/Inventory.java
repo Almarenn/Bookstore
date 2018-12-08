@@ -23,6 +23,7 @@ public class Inventory {
 	public void reset(){
 		this.inventory=null;
 	}
+
 	/**
      * Retrieves the single instance of this class.
      */
@@ -73,7 +74,6 @@ public class Inventory {
 		return OrderResult.SUCCESSFULLY_TAKEN;
 	}
 	
-		
 	/**
      * Checks if a certain book is available in the inventory.
      * <p>

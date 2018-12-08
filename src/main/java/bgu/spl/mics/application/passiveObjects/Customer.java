@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 
-
 /**
  * Passive data-object representing a customer of the store.
  * You must not alter any of the given public methods of this class.
@@ -30,7 +29,6 @@ public class Customer {
 		creditCard = creditCardNum;
 		availableAmount=amount;
 		this.orderSchedule = orderSchedule;
-
 	}
 
 	/**
@@ -60,7 +58,6 @@ public class Customer {
 	public int getDistance() {
 		return distance;
 	}
-
 
 	/**
 	 * Retrieves a list of receipts for the purchases this customer has made.
@@ -100,5 +97,4 @@ public class Customer {
 	public void addReceipt(OrderReceipt orderReceipt){
 		this.receipts.add(orderReceipt);
 	}
-
 }

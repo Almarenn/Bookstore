@@ -16,8 +16,7 @@ public class MoneyRegister {
 	private static MoneyRegister instance = null;
 	private List<OrderReceipt> receipts;
 	
-  
-	/**
+  	/**
      * Retrieves the single instance of this class.
      */
 	public static MoneyRegister getInstance() {
