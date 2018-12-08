@@ -25,8 +25,7 @@ public abstract class MicroService implements Runnable {
     private MessageBusImpl bus;
     private boolean terminated = false;
     private final String name;
-    private ConcurrentHashMap<Class<? extends Event>, Callback> callBackForEvent;
-    private ConcurrentHashMap<Class<? extends Broadcast>, Callback> callBackForBroadcast;
+    private ConcurrentHashMap<Class<? extends Message>, Callback> callBackForMessage;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -35,8 +34,9 @@ public abstract class MicroService implements Runnable {
     public MicroService(String name) {
         this.name = name;
         bus = MessageBusImpl.getInstance();
-        callBackForEvent = new ConcurrentHashMap<>();
-        callBackForBroadcast = new ConcurrentHashMap<>();
+        callBackForMessage= new ConcurrentHashMap<>();
+//        callBackForEvent = new ConcurrentHashMap<>();
+//        callBackForBroadcast = new ConcurrentHashMap<>();
         bus.register(this);
     }
 
@@ -63,7 +63,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
         bus.subscribeEvent(type,this);
-        callBackForEvent.put(type, callback);
+        callBackForMessage.put(type, callback);
     }
 
     /**
@@ -88,7 +88,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
         bus.subscribeBroadcast(type,this);
-        callBackForBroadcast.put(type, callback);
+        callBackForMessage.put(type, callback);
     }
 
     /**
@@ -172,13 +172,7 @@ public abstract class MicroService implements Runnable {
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
-
-            if(Event.class.isAssignableFrom(m.getClass()) ) {
-                callBackForEvent.get(m.getClass()).call(m);
-            }
-            if(Broadcast.class.isAssignableFrom(m.getClass())){
-                callBackForBroadcast.get(m.getClass()).call(m);
-            }
+            callBackForMessage.get(m.getClass()).call(m);
         }
     }
 }
