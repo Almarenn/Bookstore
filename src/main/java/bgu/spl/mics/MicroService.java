@@ -37,6 +37,7 @@ public abstract class MicroService implements Runnable {
         bus = MessageBusImpl.getInstance();
         callBackForEvent = new ConcurrentHashMap<>();
         callBackForBroadcast = new ConcurrentHashMap<>();
+        bus.register(this);
     }
 
     /**
@@ -171,12 +172,12 @@ public abstract class MicroService implements Runnable {
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
-            String typeOfMessage =  m.getClass().getName();
-            if(typeOfMessage.equals("Event") ) {
-                callBackForEvent.get(m).call(m);
+
+            if(Event.class.isAssignableFrom(m.getClass()) ) {
+                callBackForEvent.get(m.getClass()).call(m);
             }
-            if(typeOfMessage.equals("Broadcast")){
-                callBackForBroadcast.get(m).call(m);
+            if(Broadcast.class.isAssignableFrom(m.getClass())){
+                callBackForBroadcast.get(m.getClass()).call(m);
             }
         }
     }

@@ -4,9 +4,7 @@ import javax.xml.ws.Service;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -77,7 +75,7 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void sendBroadcast(Broadcast b) {
-		List <MicroService>l= broadcastToMicroServiceList.get(b);
+		List <MicroService>l= broadcastToMicroServiceList.get(b.getClass());
 		if(l!=null && !l.isEmpty()) {
 			for (MicroService ms : l) {
 				Queue<Message> messageQueue = serviceToMessageQueue.get(ms);
@@ -90,7 +88,7 @@ public class MessageBusImpl implements MessageBus {
 	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
-		Queue<MicroService> microServiceQueue= eventToMicrosSrviceQueue.get(e);
+		Queue<MicroService> microServiceQueue= eventToMicrosSrviceQueue.get(e.getClass());
 		if(microServiceQueue==null|| microServiceQueue.isEmpty()){
 			return null;
 		}
