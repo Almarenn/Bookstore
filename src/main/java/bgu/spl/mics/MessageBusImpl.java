@@ -45,6 +45,7 @@ public class MessageBusImpl implements MessageBus {
 		}
 		else
 			q=this.eventToMicrosSrviceQueue.get(type);
+
 		q.add(m);
 		if (!subscribedServices.contains(m)){
 			subscribedServices.add(m);
@@ -115,12 +116,17 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
-		if (!subscribedServices.contains(m)) {
-			throw new IllegalStateException();
+		while (!Thread.currentThread().isInterrupted()) {
+			if (!subscribedServices.contains(m)) {
+				throw new IllegalStateException();
+			}
+			else{
+				LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
+				if(messageQueue!=null){
+				return messageQueue.take();}}
 		}
-		LinkedBlockingQueue<Message> messageQueue= serviceToMessageQueue.get(m);
-		return messageQueue.take();
+		throw new InterruptedException();
 	}
-	
+
 
 }
