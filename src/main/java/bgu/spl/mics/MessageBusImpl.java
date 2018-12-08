@@ -1,9 +1,7 @@
 package bgu.spl.mics;
 
-import javax.xml.ws.Service;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -84,7 +82,6 @@ public class MessageBusImpl implements MessageBus {
 				catch (InterruptedException e){}
 			}}
 		}
-
 	}
 
 	
@@ -131,8 +128,6 @@ public class MessageBusImpl implements MessageBus {
 			List myList= broadcastToMicroServiceList.get(br);
 			myList.remove(m);
 		}
-
-
 	}
 
 	@Override
@@ -148,6 +143,4 @@ public class MessageBusImpl implements MessageBus {
 		}
 		throw new InterruptedException();
 	}
-
-
 }
