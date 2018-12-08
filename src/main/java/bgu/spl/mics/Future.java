@@ -19,7 +19,6 @@ public class Future<T> {
 	public Future() {
 		this.result=null;
 		this.completed=false;
-		//TODO: implement this
 	}
 	
 	/**
@@ -68,7 +67,7 @@ public class Future<T> {
      * 	       wait for {@code timeout} TimeUnits {@code unit}. If time has
      *         elapsed, return null.
      */
-	public T get(long timeout, TimeUnit unit) {
+	public synchronized T get(long timeout, TimeUnit unit) {
 		long time=unit.convert(timeout,TimeUnit.MILLISECONDS);
 		if (!completed) {
 			try {
