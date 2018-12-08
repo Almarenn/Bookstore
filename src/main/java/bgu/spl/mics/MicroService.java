@@ -104,11 +104,11 @@ public abstract class MicroService implements Runnable {
      * 	       			null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
-        if(bus.sendEvent(e)==null){
+        Future <T> f= bus.sendEvent(e);
+        if(f==null){
             return null;
         }
         else {
-            Future<T> f = bus.sendEvent(e);
             return f;
         }
     }
@@ -159,7 +159,7 @@ public abstract class MicroService implements Runnable {
     }
 
     /**
-     * The entry point of the micro-service. TODO: you must complete this code
+     * The entry point of the micro-service.
      * otherwise you will end up in an infinite loop.
      */
     @Override
@@ -174,5 +174,6 @@ public abstract class MicroService implements Runnable {
             }
             callBackForMessage.get(m.getClass()).call(m);
         }
+        bus.unregister(this);
     }
 }
