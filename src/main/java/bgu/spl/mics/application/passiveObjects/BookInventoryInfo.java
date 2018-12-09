@@ -2,7 +2,6 @@ package bgu.spl.mics.application.passiveObjects;
 
 import javax.script.ScriptEngineManager;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Passive data-object representing a information about a certain book in the inventory.
