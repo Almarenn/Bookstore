@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Passive data-object representing the store inventory.
@@ -90,8 +91,9 @@ public class Inventory {
 	
 	//private method
 	private BookInventoryInfo checkAvailability(String book){
+
 		for(int i=0; i<inventory.length; i++){
-			int amount = inventory[i].getAmountInInventory();
+			AtomicInteger amount = new AtomicInteger(inventory[i].getAmountInInventory());
 			String name =  inventory[i].getBookTitle();
 			if(name.equals(book) && amount >0){
 				return inventory[i];
