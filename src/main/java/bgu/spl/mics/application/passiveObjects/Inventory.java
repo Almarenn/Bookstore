@@ -1,7 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Passive data-object representing the store inventory.
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Inventory {
 
     private static Inventory instance = null;
-	private BookInventoryInfo[] inventory;
+	private ConcurrentHashMap<String, BookInventoryInfo> inventory;
 	
 	private Inventory() {}
 
@@ -43,18 +43,10 @@ public class Inventory {
      * 						of the inventory.
      */
 	public void load (BookInventoryInfo[ ] inventory ) {
-		if(this.inventory==null){ //if its the first load
-			this.inventory = inventory;
-		}
-		else { //if its not the first load
-			BookInventoryInfo[] temp = this.inventory;
-			this.inventory = new BookInventoryInfo[inventory.length+temp.length];
-			for(int i=0; i<temp.length; i++){
-				this.inventory[i]=temp[i];
-			}
-			for(int i=temp.length; i<this.inventory.length; i++){
-				this.inventory[i]=inventory[i-temp.length];
-			}
+		this.inventory = new ConcurrentHashMap<>();
+		for(BookInventoryInfo book: inventory ){
+			String bookTitle = book.getBookTitle();
+			this.inventory.put(bookTitle, book);
 		}
 	}
 	
@@ -91,14 +83,10 @@ public class Inventory {
 	
 	//private method
 	private BookInventoryInfo checkAvailability(String book){
-
-		for(int i=0; i<inventory.length; i++){
-			AtomicInteger amount = new AtomicInteger(inventory[i].getAmountInInventory());
-			String name =  inventory[i].getBookTitle();
-			if(name.equals(book) && amount >0){
-				return inventory[i];
+		int amount = inventory.get(book).getAmountInInventory();
+		if(amount >0){
+			return inventory.get(book);
 			}
-		}
 		return null;
 	}
 		
