@@ -1,5 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import javax.script.ScriptEngineManager;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -9,14 +11,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * You may add fields and methods to this class as you see fit (including public methods).
  */
 public class BookInventoryInfo {
-	private AtomicInteger AmountInInventory;
+	private int AmountInInventory;
 	private String bookTitle;
 	private int price;
+	private Semaphore available;
 
 	public BookInventoryInfo(String name, int price, int amount){
 		this.bookTitle=name;
 		this.price=price;
-		this.AmountInInventory.getAndSet(amount);
+		this.AmountInInventory=amount;
+		this.available= new Semaphore(amount);
 	}
 
 	/**
@@ -34,12 +38,12 @@ public class BookInventoryInfo {
 	 * @return amount of available books.
 	 */
 	public int getAmountInInventory() {
-		return AmountInInventory.intValue();
+		return AmountInInventory;
 	}
 
 
 	public void setAmountInInventory(int i){
-		this.AmountInInventory.set(i);
+		this.AmountInInventory=i;
 	}
 
 	/**
@@ -49,5 +53,10 @@ public class BookInventoryInfo {
 	 */
 	public int getPrice() {
 		return price;
+	}
+
+
+	public Semaphore getAvailable(){
+		return this.available;
 	}
 }
