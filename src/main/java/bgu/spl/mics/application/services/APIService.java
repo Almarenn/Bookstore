@@ -5,10 +5,9 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 import bgu.spl.mics.application.messages.BookOrderEvent;
 import bgu.spl.mics.application.passiveObjects.*;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -21,8 +20,9 @@ import java.util.Set;
  */
 public class APIService extends MicroService{
 	private int tick;
-	private HashMap<Integer,String> tickOrders;
+	private ConcurrentHashMap<Integer, List<String>> tickOrders;
 	private Customer customer;
+	private List<Future<OrderReceipt>> receipts;
 
 
 
@@ -36,28 +36,18 @@ public class APIService extends MicroService{
 	protected void initialize() {
 		subscribeBroadcast(TickBroadcast.class, broadcast-> {
 			this.tick=broadcast.get();
-			String bookName=findTick(tick);
-			if(bookName!=null){
-				BookOrderEvent ev=new BookOrderEvent(bookName);
-				Future<OrderReceipt> futureObject=sendEvent(ev);
-				OrderReceipt OrderReceipt= futureObject.get();
-				customer.addReceipt(OrderReceipt);
+			List<String> books= this.tickOrders.get(this.tick);
+			if(books!=null){
+				for(String s: books){
+					BookOrderEvent ev=new BookOrderEvent(s);
+					Future<OrderReceipt> futureObject=sendEvent(ev);
+					receipts.add(futureObject);
+				}
+				for(Future<OrderReceipt> f:receipts){
+					OrderReceipt OrderReceipt= f.get();
+					customer.addReceipt(OrderReceipt);
+				}
 			}
 		});
-
-		
-	}
-	//gets a certain tick as a paramter and returns the book name that should be ordered in that tick, if there is one like this
-	private String findTick(int tick){
-
-		Set set = tickOrders.entrySet();
-		Iterator iterator = set.iterator();
-		while(iterator.hasNext()) {
-			Map.Entry mentry = (Map.Entry)iterator.next();
-			if ((int)mentry.getKey()==tick){
-				return (String)mentry.getValue();
-			}
-		}
-		return null;
 	}
 }
