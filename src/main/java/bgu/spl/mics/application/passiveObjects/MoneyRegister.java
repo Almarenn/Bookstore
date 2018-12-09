@@ -12,19 +12,16 @@ import java.util.List;
  * You can add ONLY private fields and methods to this class as you see fit.
  */
 public class MoneyRegister {
-	
-	private static MoneyRegister instance = null;
+	private static class MoneyRegisterHolder {
+		private static MoneyRegister instance = new MoneyRegister();
+	}
 	private List<OrderReceipt> receipts;
 	
   	/**
      * Retrieves the single instance of this class.
      */
 	public static MoneyRegister getInstance() {
-		if(instance == null) {
-            instance = new MoneyRegister();
-         }
-         return instance;
-	}
+		return MoneyRegisterHolder.instance;}
 	
 	/**
      * Saves an order receipt in the money register.

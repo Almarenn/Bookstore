@@ -54,7 +54,11 @@ public class BookInventoryInfo {
 		return price;
 	}
 
-
+	/**
+	 * Retrieves if book is available.
+	 * <p>
+	 * @return the Semaphore that specified how many copy of this book are available.
+	 */
 	public Semaphore getAvailable(){
 		return this.available;
 	}

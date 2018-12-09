@@ -11,15 +11,13 @@ import java.util.concurrent.TimeUnit;
 public class DeliveryVehicle {
 	
 	private int license;
-	private int speed;
-	private Semaphore available;
+	private int speed;;
 	/**
      * Constructor.   
      */
 	 public DeliveryVehicle(int license, int speed) {
 		 this.license=license;
 		 this.speed=speed;
-		 this.available=true;
 	  }
 
 	/**
@@ -46,15 +44,10 @@ public class DeliveryVehicle {
      * @param distance	The distance from the store to the customer.
      */
 	public void deliver(String address, int distance) {
-		if(this.available) {
-			this.available=false;
-			int timeToDeliver = distance*speed;
-			try {
-				TimeUnit.MILLISECONDS.sleep(timeToDeliver);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			this.available=true;
+		int timeToDeliver = distance * speed;
+		try {
+			TimeUnit.MILLISECONDS.sleep(timeToDeliver);
+		} catch (InterruptedException e) {
 		}
 	}
 

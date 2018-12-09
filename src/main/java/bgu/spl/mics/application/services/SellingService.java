@@ -35,11 +35,6 @@ public class SellingService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		while(queue.isEmpty()){
-			try{
-				this.wait();
-			} catch (InterruptedException ignored){}
-		}
 //		for (int i =0; i < queue.size(); i++){
 //			BookOrderEvent bookOrder= (BookOrderEvent)queue.poll();
 //			subscribeEvent(bookOrder,message-> {
@@ -47,6 +42,7 @@ public class SellingService extends MicroService{
 //				Future<Integer> price= (Future<Integer>)sendEvent(ev);
 //
 //	}
+
 		}
 	}
 

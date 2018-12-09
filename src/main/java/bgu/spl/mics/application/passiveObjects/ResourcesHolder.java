@@ -2,6 +2,10 @@ package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * Passive object representing the resource manager.
  * You must not alter any of the given public methods of this class.
@@ -16,8 +20,9 @@ public class ResourcesHolder {
 	private static class ResourcesHolderHolder {
 		private static ResourcesHolder instance = new ResourcesHolder();
 	}
-	private DeliveryVehicle[] vehicles;
-	private boolean[] vehiclesAvailable;
+//	private DeliveryVehicle[] vehicles;
+	private ConcurrentHashMap<DeliveryVehicle,Boolean> vehicles;
+//	private boolean[] vehiclesAvailable;
 	/**
      * Retrieves the single instance of this class.
      */
@@ -34,16 +39,26 @@ public class ResourcesHolder {
      * 			{@link DeliveryVehicle} when completed.   
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
-		Future<DeliveryVehicle> vehicle= new Future<DeliveryVehicle>();
+		Future<DeliveryVehicle> vehicle= new Future<>();
 		boolean found=false;
 		while (!found) {
-			for(int i=0;i<this.vehiclesAvailable.length && !found; i++) {
-				if(this.vehiclesAvailable[i]==true) {
+			for(Map.Entry e: this.vehicles.entrySet()){
+				if(e.getValue().equals(true)){
 					found=true;
-					this.vehiclesAvailable[i]=false;
-					vehicle.resolve(vehicles[i]);
+					this.vehicles.replace((DeliveryVehicle)e.getKey(),false);
+					vehicle.resolve((DeliveryVehicle)e.getKey());
+					break;
 				}
 			}
+//			this.vehicles.
+//			this.vehicles.replace(vehicle,true);
+//			for(int i=0;i<this.vehiclesAvailable.length && !found; i++) {
+//				if(this.vehiclesAvailable[i]==true) {
+//					found=true;
+//					this.vehiclesAvailable[i]=false;
+//					vehicle.resolve(vehicles[i]);
+//				}
+//			}
 		}
 		return vehicle;
 	}
@@ -55,7 +70,7 @@ public class ResourcesHolder {
      * @param vehicle	{@link DeliveryVehicle} to be released.
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
-		
+		this.vehicles.replace(vehicle,true);
 	}
 	
 	/**
@@ -64,10 +79,13 @@ public class ResourcesHolder {
      * @param vehicles	Array of {@link DeliveryVehicle} instances to store.
      */
 	public void load(DeliveryVehicle[] vehicles) {
-		this.vehicles= vehicles;
-		for(int i=0;i<this.vehiclesAvailable.length;i++) {
-			vehiclesAvailable[i]=true;
+		for( DeliveryVehicle v:vehicles){
+			this.vehicles.put(v,true);
 		}
+//		this.vehicles= vehicles;
+//		for(int i=0;i<this.vehiclesAvailable.length;i++) {
+//			vehiclesAvailable[i]=true;
+//		}
 	}
 
 }
