@@ -1,4 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -11,7 +12,7 @@ public class DeliveryVehicle {
 	
 	private int license;
 	private int speed;
-	private boolean available;
+	private Semaphore available;
 	/**
      * Constructor.   
      */
