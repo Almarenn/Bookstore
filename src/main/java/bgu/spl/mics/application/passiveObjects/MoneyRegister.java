@@ -48,7 +48,7 @@ public class MoneyRegister {
      * @param amount 	amount to charge
      */
 	public void chargeCreditCard(Customer c, int amount) {
-		c.pay(amount);
+		if(c.pay(amount));
 	}
 	
 	/**

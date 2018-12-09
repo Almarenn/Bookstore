@@ -9,9 +9,6 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 /**
  * Selling service in charge of taking orders from customers.
  * Holds a reference to the {@link MoneyRegister} singleton of the store.
@@ -24,24 +21,24 @@ import java.util.Queue;
  */
 public class SellingService extends MicroService{
 	private MoneyRegister moneyRegister;
-	private Queue<Message> queue;
 
 	public SellingService(String name) {
 		super(name);
 		moneyRegister= MoneyRegister.getInstance();
-		queue = new LinkedList<Message>();
 
 	}
 
 	@Override
 	protected void initialize() {
-//		for (int i =0; i < queue.size(); i++){
-//			BookOrderEvent bookOrder= (BookOrderEvent)queue.poll();
-//			subscribeEvent(bookOrder,message-> {
-//				CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(bookOrder.getBookName());
-//				Future<Integer> price= (Future<Integer>)sendEvent(ev);
-//
-//	}
+		subscribeEvent(BookOrderEvent.class,event-> {
+			CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(event.getBookName());
+			Future<Integer> f= (Future<Integer>)sendEvent(ev);
+			int price= f.get();
+			if(price!=-1){
+
+			}
+
+	}
 
 		}
 	}
