@@ -1,6 +1,7 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 /**
  * Passive data-object representing the store inventory.
@@ -72,7 +73,7 @@ public class Inventory {
      * @param book 		Name of the book.
      * @return the price of the book if it is available, -1 otherwise.
      */
-	public int checkAvailabilityAndGetPrice(String book) {
+	public int checkAvailabilityAndGetPrice(String book){
 		BookInventoryInfo b = checkAvailability(book);
 		if(b==null){
 			return -1;
@@ -82,8 +83,8 @@ public class Inventory {
 	
 	//private method
 	private BookInventoryInfo checkAvailability(String book){
-		int amount = inventory.get(book).getAmountInInventory();
-		if(amount >0){
+		Semaphore available = inventory.get(book).getAvailable();
+		if(available.tryAcquire()){
 			return inventory.get(book);
 			}
 		return null;

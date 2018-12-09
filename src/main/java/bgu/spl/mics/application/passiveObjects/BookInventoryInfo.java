@@ -1,5 +1,9 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import javax.script.ScriptEngineManager;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Passive data-object representing a information about a certain book in the inventory.
  * You must not alter any of the given public methods of this class. 
@@ -10,11 +14,13 @@ public class BookInventoryInfo {
 	private int AmountInInventory;
 	private String bookTitle;
 	private int price;
+	private Semaphore available;
 
 	public BookInventoryInfo(String name, int price, int amount){
 		this.bookTitle=name;
 		this.price=price;
 		this.AmountInInventory=amount;
+		this.available= new Semaphore(amount);
 	}
 
 	/**
@@ -37,7 +43,7 @@ public class BookInventoryInfo {
 
 
 	public void setAmountInInventory(int i){
-		AmountInInventory = i;
+		this.AmountInInventory=i;
 	}
 
 	/**
@@ -47,5 +53,10 @@ public class BookInventoryInfo {
 	 */
 	public int getPrice() {
 		return price;
+	}
+
+
+	public Semaphore getAvailable(){
+		return this.available;
 	}
 }
