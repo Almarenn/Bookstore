@@ -10,6 +10,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /** This is the Main class of the application. You should parse the input file,
  * create the different instances of the objects, and run the system.
@@ -95,12 +97,20 @@ public class BookStoreRunner {
 			int creditCardNum = (int) creditCard.get("number");
 			int amount = (int) creditCard.get("amount");
 			JSONArray orderScheduleArr = (JSONArray) customerAtIndex.get("orderSchedule");
-			HashMap<Integer, String> orderSchedule = new HashMap<>();
+			HashMap<Integer, List<String>> orderSchedule = new HashMap<>();
 			for (int j = 0; j < orderScheduleArr.size(); j++) {
 				JSONObject book = (JSONObject) customersArray.get(i);
 				String bookTitle = (String) book.get("bookTitle");
 				Integer tick = (Integer) book.get("tick");
-				orderSchedule.put(tick, bookTitle);
+				List<String> l;
+				if(!orderSchedule.containsKey(tick)){
+					l = new LinkedList<>();
+					orderSchedule.put(tick, l);
+				}
+				else {
+					l = orderSchedule.get(tick);
+				}
+				l.add(bookTitle);
 			}
 			customersArr[i] = new Customer(id, name, address, distance, creditCardNum, amount, orderSchedule);
 		}

@@ -1,8 +1,8 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.Future;
+
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.messages.checkVehicleAvailabilityEvent;
+import bgu.spl.mics.application.messages.releaseVehicleEvent;
 import bgu.spl.mics.application.passiveObjects.DeliveryVehicle;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
@@ -15,7 +15,7 @@ import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-public class ResourceService extends MicroService{
+public class ResourceService extends MicroService {
 	
 	private ResourcesHolder r;
 
@@ -27,8 +27,11 @@ public class ResourceService extends MicroService{
 	//signing for events and broadcasts
 	@Override
 	protected void initialize() {
-		subscribeEvent(checkVehicleAvailabilityEvent.class, event->{
-			Future<DeliveryVehicle> f = r.acquireVehicle();
+//		subscribeEvent(findVehicleEvent.class, event1->{
+//			Future<DeliveryVehicle> v = r.acquireVehicle();
+//		} );
+		subscribeEvent(releaseVehicleEvent.class, event->{
+			DeliveryVehicle v = event.;
 		} );
 	}
 

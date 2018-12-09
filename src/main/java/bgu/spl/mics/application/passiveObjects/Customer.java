@@ -18,9 +18,9 @@ public class Customer {
 	private List<OrderReceipt> receipts;
 	private int creditCard;
 	private int availableAmount;
-	private HashMap<Integer,String> orderSchedule ;
+	private HashMap<Integer,List<String>> orderSchedule ;
 
-	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, HashMap<Integer,String> orderSchedule){
+	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, HashMap<Integer,List<String>> orderSchedule){
 		this.id=id;
 		this.name=name;
 		this.address=address;
@@ -90,7 +90,7 @@ public class Customer {
 		}
 	}
 
-	public HashMap<Integer,String>  getOrderSchedule() {
+	public HashMap<Integer,List<String>>  getOrderSchedule() {
 		return orderSchedule;
 	}
 
