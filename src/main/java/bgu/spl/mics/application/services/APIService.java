@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class APIService extends MicroService{
 	private int tick;
-	private ConcurrentHashMap<Integer, List<String>> tickOrders;
+	private HashMap<Integer, List<String>> tickOrders;
 	private Customer customer;
 	private List<Future<OrderReceipt>> receipts;
 
