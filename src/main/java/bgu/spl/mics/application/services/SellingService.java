@@ -47,6 +47,7 @@ public class SellingService extends MicroService{
 				c.getAvailable().release();
 				recipetNumber=recipetNumber++;
 				OrderReceipt o= new OrderReceipt(this.recipetNumber,this.getName(),c.getId(),event.getBookName(),price,event.getOrderTick(),this.tick,currTick);
+				moneyRegister.file(o);
 				this.recipetNumber++;
 				complete(event,o);
 				DeliveryEvent d= new DeliveryEvent(c.getAddress(),c.getDistance());
