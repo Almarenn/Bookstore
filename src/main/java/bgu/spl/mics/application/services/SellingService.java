@@ -5,12 +5,12 @@ import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.BookOrderEvent;
 import bgu.spl.mics.application.messages.CheckAvailibiltyEvent;
+import bgu.spl.mics.application.messages.DeliveryEvent;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
+import bgu.spl.mics.application.passiveObjects.OrderReceipt;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
-
-import java.util.LinkedList;
-import java.util.Queue;
+import bgu.spl.mics.application.Messages.TickBroadcast;
 
 /**
  * Selling service in charge of taking orders from customers.
@@ -24,25 +24,35 @@ import java.util.Queue;
  */
 public class SellingService extends MicroService{
 	private MoneyRegister moneyRegister;
-	private Queue<Message> queue;
+	int recipetNumber=0;
+	int tick;
 
 	public SellingService(String name) {
 		super(name);
 		moneyRegister= MoneyRegister.getInstance();
-		queue = new LinkedList<Message>();
 
 	}
 
 	@Override
 	protected void initialize() {
-//		for (int i =0; i < queue.size(); i++){
-//			BookOrderEvent bookOrder= (BookOrderEvent)queue.poll();
-//			subscribeEvent(bookOrder,message-> {
-//				CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(bookOrder.getBookName());
-//				Future<Integer> price= (Future<Integer>)sendEvent(ev);
-//
-//	}
-
+		subscribeEvent(BookOrderEvent.class,event-> {
+			int currTick= this.tick;
+			CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(event.getBookName(), event.getCustomer());
+			Future<Integer> f= (Future<Integer>)sendEvent(ev);
+			int price= f.get();
+			if(price!=-1){
+				synchronized (event.getCustomer()){
+				moneyRegister.chargeCreditCard(event.getCustomer(),price);
+				recipetNumber=recipetNumber++;
+				OrderReceipt o= new OrderReceipt(this.recipetNumber,this.toString(),event.getCustomer().getId(),event.getBookName(),price,event.getOrderTick(),this.tick,currTick);
+				DeliveryEvent d= new DeliveryEvent();
+				Future future=sendEvent(d);
+				complete(event,o);
+			}}
+	});
+		subscribeBroadcast(TickBroadcast.class,broadcast->{
+			this.tick=broadcast.get();
+		});
 		}
 	}
 

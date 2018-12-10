@@ -84,7 +84,7 @@ public class Customer {
 		return creditCard;
 	}
 
-	public void pay(int i) {
+	public synchronized void pay(int i) {
 		if(i>=availableAmount) {
 			availableAmount = availableAmount-i;
 		}

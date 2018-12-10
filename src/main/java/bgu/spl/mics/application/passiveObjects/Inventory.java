@@ -58,8 +58,9 @@ public class Inventory {
      * 			second should reduce by one the number of books of the desired type.
      */
 	public OrderResult take (String book) {
-		BookInventoryInfo b = checkAvailability(book);
-		if(b==null){
+		BookInventoryInfo b=inventory.get(book);
+		Semaphore available = inventory.get(book).getAvailable();
+		if(!available.tryAcquire()){
 			return OrderResult.NOT_IN_STOCK;
 		}
 		b.setAmountInInventory(b.getAmountInInventory()-1);
@@ -73,21 +74,21 @@ public class Inventory {
      * @return the price of the book if it is available, -1 otherwise.
      */
 	public int checkAvailabilityAndGetPrice(String book){
-		BookInventoryInfo b = checkAvailability(book);
-		if(b==null){
+		int b= inventory.get(book).getAmountInInventory();
+		if(b==0){
 			return -1;
 		}
-		return b.getPrice();
+		return inventory.get(book).getPrice();
 	}
 	
-	//private method
-	private BookInventoryInfo checkAvailability(String book){
-		Semaphore available = inventory.get(book).getAvailable();
-		if(available.tryAcquire()){
-			return inventory.get(book);
-			}
-		return null;
-	}
+//	//private method
+//	private BookInventoryInfo checkAvailability(String book){
+//		Semaphore available = inventory.get(book).getAvailable();
+//		if(available.tryAcquire()){
+//			return inventory.get(book);
+//			}
+//		return null;
+//	}
 		
 	/**
      * 
