@@ -4,6 +4,7 @@ import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 import bgu.spl.mics.application.messages.BookOrderEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
 
 import java.util.*;
@@ -34,6 +35,7 @@ public class APIService extends MicroService{
 
 	@Override
 	protected void initialize() {
+
 		subscribeBroadcast(TickBroadcast.class, broadcast-> {
 			this.tick=broadcast.get();
 			List<String> books= this.tickOrders.get(this.tick);
