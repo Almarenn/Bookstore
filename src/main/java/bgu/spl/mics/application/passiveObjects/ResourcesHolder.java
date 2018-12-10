@@ -19,7 +19,7 @@ public class ResourcesHolder {
 	private static class ResourcesHolderHolder {
 		private static ResourcesHolder instance = new ResourcesHolder();
 	}
-//	private DeliveryVehicle[] vehicles;
+
 	private ConcurrentHashMap<DeliveryVehicle,Boolean> vehicles;
 //	private boolean[] vehiclesAvailable;
 	/**
