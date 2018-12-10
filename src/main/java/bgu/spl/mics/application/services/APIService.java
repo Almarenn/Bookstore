@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * You can add private fields and public methods to this class.
  * You MAY change constructor signatures and even add new public constructors.
  */
-//bes API
 public class APIService extends MicroService{
 	private int tick;
 	private HashMap<Integer, List<String>> tickOrders;

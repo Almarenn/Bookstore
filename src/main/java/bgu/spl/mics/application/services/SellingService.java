@@ -6,10 +6,7 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.BookOrderEvent;
 import bgu.spl.mics.application.messages.CheckAvailibiltyEvent;
 import bgu.spl.mics.application.messages.DeliveryEvent;
-import bgu.spl.mics.application.passiveObjects.Inventory;
-import bgu.spl.mics.application.passiveObjects.MoneyRegister;
-import bgu.spl.mics.application.passiveObjects.OrderReceipt;
-import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
+import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 
 /**
@@ -37,15 +34,16 @@ public class SellingService extends MicroService{
 	protected void initialize() {
 		subscribeEvent(BookOrderEvent.class,event-> {
 			int currTick= this.tick;
-			CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(event.getBookName(), event.getCustomer());
+			Customer c= event.getCustomer();
+			CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(event.getBookName(), c);
 			Future<Integer> f= (Future<Integer>)sendEvent(ev);
 			int price= f.get();
 			if(price!=-1){
-				synchronized (event.getCustomer()){
-				moneyRegister.chargeCreditCard(event.getCustomer(),price);
+				synchronized (c){
+				moneyRegister.chargeCreditCard(c,price);
 				recipetNumber=recipetNumber++;
-				OrderReceipt o= new OrderReceipt(this.recipetNumber,this.toString(),event.getCustomer().getId(),event.getBookName(),price,event.getOrderTick(),this.tick,currTick);
-				DeliveryEvent d= new DeliveryEvent();
+				OrderReceipt o= new OrderReceipt(this.recipetNumber,this.toString(),c.getId(),event.getBookName(),price,event.getOrderTick(),this.tick,currTick);
+				DeliveryEvent d= new DeliveryEvent(c.getAddress(),c.getDistance());
 				Future future=sendEvent(d);
 				complete(event,o);
 			}}
