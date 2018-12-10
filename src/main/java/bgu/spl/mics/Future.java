@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class Future<T> {
 	private boolean completed;
 	private T result;
+	private boolean shouldStop= false;
 	/**
 	 * This should be the the only public constructor in this class.
 	 */
@@ -29,10 +30,13 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      * 	       
      */
-	public synchronized T get() {
-		while (!completed){
+	public synchronized T get(){
+		while (!completed &&!shouldStop){
 			try {
-				this.wait();} catch (InterruptedException e){}
+				this.wait();}
+			catch (InterruptedException e){
+				shouldStop=true;
+			}
 		}
 			return result;
 	}
@@ -41,9 +45,14 @@ public class Future<T> {
      * Resolves the result of this Future object.
      */
 	public synchronized void resolve (T result) {
-		this.result= result;
-		this.completed= true;
-		notifyAll();
+		if(result==null){
+			shouldStop=true;
+		}
+		else {
+			this.result = result;
+			this.completed = true;
+			notifyAll();
+		}
 	}
 	
 	/**

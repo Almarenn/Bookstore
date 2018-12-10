@@ -116,6 +116,11 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void unregister(MicroService m) {
+		LinkedBlockingQueue<Message> leftovers= serviceToMessageQueue.get(m);
+		while(!leftovers.isEmpty()){
+			Message mess=leftovers.poll();
+			m.complete((Event)mess, null);
+		}
 		serviceToMessageQueue.remove(m);
 		List<Class<? extends Event>> l1=microServiceToSubscribedEvents.get(m);
 		List<Class<? extends Broadcast>> l2=microServiceToSubscribedBroadcasts.get(m);
