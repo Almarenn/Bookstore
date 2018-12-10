@@ -10,12 +10,23 @@ package bgu.spl.mics.application.passiveObjects;
 public class OrderReceipt {
 	private int OrderId;
 	private String seller;
-	private int costumer;
+	private int customer;
 	private String bookTitle;
 	private int price;
 	private int issuedTick;
 	private int orderTick;
 	private int proccessTick;
+
+	public OrderReceipt(int id,String seller,int customer,String bookTitle,int price,int issuedTick,int orderTick,int proccessTick){
+		this.OrderId= id;
+		this.seller= seller;
+		this.customer= customer;
+		this.bookTitle=bookTitle;
+		this.price=price;
+		this.issuedTick=issuedTick;
+		this.orderTick=orderTick;
+		this.proccessTick=proccessTick;
+	}
 
 	/**
      * Retrieves the orderId of this receipt.
@@ -37,7 +48,7 @@ public class OrderReceipt {
      * @return the ID of the customer
      */
 	public int getCustomerId() {
-		return costumer;
+		return customer;
 	}
 	
 	/**

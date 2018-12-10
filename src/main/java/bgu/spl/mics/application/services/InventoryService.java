@@ -3,10 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CheckAvailibiltyEvent;
-import bgu.spl.mics.application.passiveObjects.BookInventoryInfo;
-import bgu.spl.mics.application.passiveObjects.Inventory;
-import bgu.spl.mics.application.passiveObjects.MoneyRegister;
-import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
+import bgu.spl.mics.application.passiveObjects.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,28 +21,27 @@ import java.util.concurrent.ArrayBlockingQueue;
  */
 
 public class InventoryService extends MicroService{
-
-	private Queue<Message> queue;
 	private Inventory inventory;
 
 	public InventoryService(String name) {
 		super(name);
 		this.inventory= Inventory.getInstance();
-		queue = new LinkedList<Message>();
 	}
 
 	@Override
 	protected void initialize() {
-		subscribeEvent(CheckAvailibiltyEvent,event-> {
-			int price=(int)inventory.checkAvailabilityAndGetPrice(ev.getBookName());
-			if(price!=-1){
-				complete(CheckAvailibiltyEvent,price);
+		subscribeEvent(CheckAvailibiltyEvent.class,event-> {
+			int price=(int)inventory.checkAvailabilityAndGetPrice(event.getBookName());
+			synchronized (event.getCustomer()){
+			if(price!=-1 && event.getCustomer().getAvailableCreditAmount()<=price){
+				OrderResult o= inventory.take(event.getBookName());
+				if(o==OrderResult.SUCCESSFULLY_TAKEN){
+					complete(event,price);
 				}
 			else
-				complete(CheckAvailibiltyEvent,price);
-
+				complete(event,-1);
 				}
-			});
+			}});
 		}
 
 		

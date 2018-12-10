@@ -39,7 +39,7 @@ public class APIService extends MicroService{
 			List<String> books= this.tickOrders.get(this.tick);
 			if(books!=null){
 				for(String s: books){
-					BookOrderEvent ev=new BookOrderEvent(s);
+					BookOrderEvent ev=new BookOrderEvent(s,customer,this.tick);
 					Future<OrderReceipt> futureObject=sendEvent(ev);
 					receipts.add(futureObject);
 				}
