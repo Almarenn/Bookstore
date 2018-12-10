@@ -31,7 +31,7 @@ public class InventoryService extends MicroService{
 	@Override
 	protected void initialize() {
 		subscribeEvent(CheckAvailibiltyEvent.class,event-> {
-			int price=(int)inventory.checkAvailabilityAndGetPrice(event.getBookName());
+			int price=inventory.checkAvailabilityAndGetPrice(event.getBookName());
 			if(price!=-1 && event.getCustomer().getAvailableCreditAmount()>=price){
 				OrderResult o= inventory.take(event.getBookName());
 				if(o==OrderResult.SUCCESSFULLY_TAKEN){
