@@ -1,5 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 
@@ -58,6 +61,13 @@ public class MoneyRegister implements Serializable {
      * This method is called by the main method in order to generate the output.
      */
 	public void printOrderReceipts(String filename) {
-		//TODO: Implement this
+		try{
+			FileOutputStream file = 	new FileOutputStream(filename);
+			ObjectOutputStream obj = new ObjectOutputStream(file);
+			obj.writeObject(receipts);
+			obj.close();
+			file.close();
+		}
+		catch(IOException e){}
 	}
 }
