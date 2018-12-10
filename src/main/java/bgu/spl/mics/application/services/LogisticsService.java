@@ -31,6 +31,7 @@ public class LogisticsService extends MicroService {
 			complete(event, true);
 			sendEvent(new releaseVehicleEvent(v));
 		});
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}
 
 }

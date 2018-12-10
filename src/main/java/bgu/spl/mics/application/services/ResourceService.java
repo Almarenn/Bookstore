@@ -40,5 +40,6 @@ public class ResourceService extends MicroService {
 			r.releaseVehicle(v);
 			complete(event, true);
 		} );
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}
 }

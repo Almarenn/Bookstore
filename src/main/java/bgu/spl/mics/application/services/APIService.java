@@ -49,5 +49,6 @@ public class APIService extends MicroService{
 				}
 			}
 		});
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}
 }

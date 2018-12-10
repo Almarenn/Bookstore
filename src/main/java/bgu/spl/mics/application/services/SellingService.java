@@ -35,6 +35,7 @@ public class SellingService extends MicroService{
 		subscribeEvent(BookOrderEvent.class,event-> {
 			int currTick= this.tick;
 			Customer c= event.getCustomer();
+
 			CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(event.getBookName(), c);
 			Future<Integer> f= (Future<Integer>)sendEvent(ev);
 			int price= f.get();
@@ -43,14 +44,13 @@ public class SellingService extends MicroService{
 				moneyRegister.chargeCreditCard(c,price);
 				recipetNumber=recipetNumber++;
 				OrderReceipt o= new OrderReceipt(this.recipetNumber,this.toString(),c.getId(),event.getBookName(),price,event.getOrderTick(),this.tick,currTick);
-				DeliveryEvent d= new DeliveryEvent(c.getAddress(),c.getDistance());
-				Future future=sendEvent(d);
 				complete(event,o);
+				DeliveryEvent d= new DeliveryEvent(c.getAddress(),c.getDistance());
+				sendEvent(d);
 			}}
 	});
-		subscribeBroadcast(TickBroadcast.class,broadcast->{
-			this.tick=broadcast.get();
-		});
-		}
+		subscribeBroadcast(TickBroadcast.class,broadcast-> this.tick=broadcast.get());
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}
+}
 

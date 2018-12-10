@@ -42,9 +42,8 @@ public class InventoryService extends MicroService{
 				complete(event,-1);
 				}
 			}});
-		}
-
-		
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}
+}
 
 
