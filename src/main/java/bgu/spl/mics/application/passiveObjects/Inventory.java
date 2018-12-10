@@ -1,5 +1,11 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import javax.imageio.IIOException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
@@ -80,16 +86,7 @@ public class Inventory {
 		}
 		return inventory.get(book).getPrice();
 	}
-	
-//	//private method
-//	private BookInventoryInfo checkAvailability(String book){
-//		Semaphore available = inventory.get(book).getAvailable();
-//		if(available.tryAcquire()){
-//			return inventory.get(book);
-//			}
-//		return null;
-//	}
-		
+
 	/**
      * 
      * <p>
@@ -98,7 +95,20 @@ public class Inventory {
      * their respective available amount in the inventory. 
      * This method is called by the main method in order to generate the output.
      */
-	public void printInventoryToFile(String filename){
-		//TODO: Implement this
+	public void printInventoryToFile(String filename) {
+		HashMap<String, Integer> map = new HashMap<>();
+		for (Map.Entry e : this.inventory.entrySet()) {
+			String title = (String)e.getKey();
+			int amount = ((BookInventoryInfo)e.getValue()).getAmountInInventory();
+			map.put(title, amount);
+		}
+		try{
+		FileOutputStream file = 	new FileOutputStream(filename);
+		ObjectOutputStream obj = new ObjectOutputStream(file);
+		obj.writeObject(map);
+		obj.close();
+		file.close();
+		}
+		catch(IOException e){}
 	}
 }
