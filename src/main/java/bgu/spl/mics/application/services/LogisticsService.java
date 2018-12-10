@@ -32,9 +32,12 @@ public class LogisticsService extends MicroService {
 		subscribeEvent(DeliveryEvent.class, event->{
 			Future<DeliveryVehicle> f1=sendEvent(new findVehicleEvent());
 			DeliveryVehicle v = f1.get();
+			if(v!=null){
 			v.deliver(event.getAddress(), event.getDistance());
 			complete(event, true);
-			sendEvent(new releaseVehicleEvent(v));
+			sendEvent(new releaseVehicleEvent(v));}
+			else
+				complete(event,null);
 		});
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}

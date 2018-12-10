@@ -35,7 +35,6 @@ public class APIService extends MicroService{
 
 	@Override
 	protected void initialize() {
-
 		subscribeBroadcast(TickBroadcast.class, broadcast-> {
 			this.tick=broadcast.get();
 			List<String> books= this.tickOrders.get(this.tick);
@@ -46,8 +45,10 @@ public class APIService extends MicroService{
 					receipts.add(futureObject);
 				}
 				for(Future<OrderReceipt> f:receipts){
-					OrderReceipt OrderReceipt= f.get();
-					customer.addReceipt(OrderReceipt);
+					OrderReceipt orderReceipt= f.get();
+					if(orderReceipt!=null){
+						customer.addReceipt(orderReceipt);
+					}
 				}
 			}
 		});

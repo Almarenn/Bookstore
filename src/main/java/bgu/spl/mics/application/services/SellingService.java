@@ -41,18 +41,21 @@ public class SellingService extends MicroService{
 			catch (InterruptedException e){}
 			CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(event.getBookName(), c);
 			Future<Integer> f= (Future<Integer>)sendEvent(ev);
-			int price= f.get();
-			if(price!=-1){
-				moneyRegister.chargeCreditCard(c,price);
-				c.getAvailable().release();
-				recipetNumber=recipetNumber++;
-				OrderReceipt o= new OrderReceipt(this.recipetNumber,this.getName(),c.getId(),event.getBookName(),price,event.getOrderTick(),this.tick,currTick);
-				moneyRegister.file(o);
-				this.recipetNumber++;
-				complete(event,o);
-				DeliveryEvent d= new DeliveryEvent(c.getAddress(),c.getDistance());
-				sendEvent(d);
-			}
+				Integer price = f.get();
+				if (price != -1&& price!=null) {
+					moneyRegister.chargeCreditCard(c, price);
+					c.getAvailable().release();
+					recipetNumber = recipetNumber++;
+					OrderReceipt o = new OrderReceipt(this.recipetNumber, this.getName(), c.getId(), event.getBookName(), price, event.getOrderTick(), this.tick, currTick);
+					moneyRegister.file(o);
+					this.recipetNumber++;
+					complete(event, o);
+					DeliveryEvent d = new DeliveryEvent(c.getAddress(), c.getDistance());
+					sendEvent(d);
+				}
+				if(price==null){
+					complete(event,null);
+				}
 	});
 		subscribeBroadcast(TickBroadcast.class,broadcast->{
 			this.tick=broadcast.get();

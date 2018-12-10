@@ -103,7 +103,7 @@ public class Inventory {
 			map.put(title, amount);
 		}
 		try{
-		FileOutputStream file = 	new FileOutputStream(filename);
+		FileOutputStream file = new FileOutputStream(filename);
 		ObjectOutputStream obj = new ObjectOutputStream(file);
 		obj.writeObject(map);
 		obj.close();
