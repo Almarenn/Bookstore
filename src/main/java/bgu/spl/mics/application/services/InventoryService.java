@@ -1,14 +1,8 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.Message;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CheckAvailibiltyEvent;
 import bgu.spl.mics.application.passiveObjects.*;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 
 /**
  * InventoryService is in charge of the book inventory and stock.

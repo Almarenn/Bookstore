@@ -6,9 +6,7 @@ import bgu.spl.mics.application.Messages.TickBroadcast;
 import bgu.spl.mics.application.messages.BookOrderEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
-
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * APIService is in charge of the connection between a client and the store.

@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import javax.imageio.IIOException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;

@@ -1,7 +1,7 @@
 package bgu.spl.mics.application;
+
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.*;
-
 import java.io.*;
 import java.nio.file.Paths;
 import org.json.simple.JSONArray;

@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public class MoneyRegister implements Serializable {
 	private static class MoneyRegisterHolder {
 		private static MoneyRegister instance = new MoneyRegister();
 	}
-	private List<OrderReceipt> receipts;
+	private List<OrderReceipt> receipts=new LinkedList<>();
 	
   	/**
      * Retrieves the single instance of this class.
