@@ -3,6 +3,7 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 import bgu.spl.mics.application.messages.BookOrderEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
@@ -49,6 +50,7 @@ public class TimeService extends MicroService{
 					sendBroadcast(new TickBroadcast(tick));
 				}
 				else
+					sendBroadcast(new TerminateBroadcast());
 					terminate();
 			}
 		}, speed);

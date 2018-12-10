@@ -3,6 +3,7 @@ package bgu.spl.mics.application.passiveObjects;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.concurrent.Semaphore;
 
 /**
  * Passive data-object representing a customer of the store.
@@ -19,6 +20,7 @@ public class Customer {
 	private int creditCard;
 	private int availableAmount;
 	private HashMap<Integer,List<String>> orderSchedule ;
+	private Semaphore available= new Semaphore(1);
 
 	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, HashMap<Integer,List<String>> orderSchedule){
 		this.id=id;
@@ -84,7 +86,7 @@ public class Customer {
 		return creditCard;
 	}
 
-	public synchronized void pay(int i) {
+	public void pay(int i) {
 		if(i>=availableAmount) {
 			availableAmount = availableAmount-i;
 		}
@@ -96,5 +98,9 @@ public class Customer {
 
 	public void addReceipt(OrderReceipt orderReceipt){
 		this.receipts.add(orderReceipt);
+	}
+
+	public Semaphore getAvailable(){
+		return this.available;
 	}
 }

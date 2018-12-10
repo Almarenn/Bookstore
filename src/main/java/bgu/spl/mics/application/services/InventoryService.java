@@ -32,8 +32,7 @@ public class InventoryService extends MicroService{
 	protected void initialize() {
 		subscribeEvent(CheckAvailibiltyEvent.class,event-> {
 			int price=(int)inventory.checkAvailabilityAndGetPrice(event.getBookName());
-			synchronized (event.getCustomer()){
-			if(price!=-1 && event.getCustomer().getAvailableCreditAmount()<=price){
+			if(price!=-1 && event.getCustomer().getAvailableCreditAmount()>=price){
 				OrderResult o= inventory.take(event.getBookName());
 				if(o==OrderResult.SUCCESSFULLY_TAKEN){
 					complete(event,price);
@@ -41,7 +40,7 @@ public class InventoryService extends MicroService{
 			else
 				complete(event,-1);
 				}
-			}});
+			});
 		}
 
 		

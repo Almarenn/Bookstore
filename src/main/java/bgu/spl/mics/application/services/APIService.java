@@ -19,10 +19,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class APIService extends MicroService{
-	private int tick;
+	private int tick=1;
 	private HashMap<Integer, List<String>> tickOrders;
 	private Customer customer;
-	private List<Future<OrderReceipt>> receipts;
+	private List<Future<OrderReceipt>> receipts= new LinkedList<>();
 
 
 
