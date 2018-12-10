@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
 
-import javax.script.ScriptEngineManager;
 import java.util.concurrent.Semaphore;
 
 /**

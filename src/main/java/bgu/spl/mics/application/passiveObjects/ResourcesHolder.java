@@ -1,7 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,8 +19,8 @@ public class ResourcesHolder {
 		private static ResourcesHolder instance = new ResourcesHolder();
 	}
 
-	private ConcurrentHashMap<DeliveryVehicle,Boolean> vehicles;
-//	private boolean[] vehiclesAvailable;
+	private ConcurrentHashMap<DeliveryVehicle,Boolean> vehicles = new ConcurrentHashMap<>();
+
 	/**
      * Retrieves the single instance of this class.
      */
@@ -38,26 +37,17 @@ public class ResourcesHolder {
      * 			{@link DeliveryVehicle} when completed.   
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
-		Future<DeliveryVehicle> vehicle= new Future<>();
-		boolean found=false;
+		Future<DeliveryVehicle> vehicle = new Future<>();
+		boolean found = false;
 		while (!found) {
-			for(Map.Entry e: this.vehicles.entrySet()){
-				if(e.getValue().equals(true)){
-					found=true;
-					this.vehicles.replace((DeliveryVehicle)e.getKey(),false);
-					vehicle.resolve((DeliveryVehicle)e.getKey());
+			for (Map.Entry e : this.vehicles.entrySet()) {
+				if (e.getValue().equals(true)) {
+					found = true;
+					this.vehicles.replace((DeliveryVehicle) e.getKey(), false);
+					vehicle.resolve((DeliveryVehicle) e.getKey());
 					break;
 				}
 			}
-//			this.vehicles.
-//			this.vehicles.replace(vehicle,true);
-//			for(int i=0;i<this.vehiclesAvailable.length && !found; i++) {
-//				if(this.vehiclesAvailable[i]==true) {
-//					found=true;
-//					this.vehiclesAvailable[i]=false;
-//					vehicle.resolve(vehicles[i]);
-//				}
-//			}
 		}
 		return vehicle;
 	}
@@ -78,13 +68,8 @@ public class ResourcesHolder {
      * @param vehicles	Array of {@link DeliveryVehicle} instances to store.
      */
 	public void load(DeliveryVehicle[] vehicles) {
-		for( DeliveryVehicle v:vehicles){
-			this.vehicles.put(v,true);
+		for (DeliveryVehicle v : vehicles) {
+			this.vehicles.put(v, true);
 		}
-//		this.vehicles= vehicles;
-//		for(int i=0;i<this.vehiclesAvailable.length;i++) {
-//			vehiclesAvailable[i]=true;
-//		}
 	}
-
 }
