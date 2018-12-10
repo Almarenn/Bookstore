@@ -1,9 +1,8 @@
 package bgu.spl.mics.application;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.services.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+
+import java.io.*;
 import java.nio.file.Paths;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,6 +30,7 @@ public class BookStoreRunner {
 		}
 		//load the books inventory
 		JSONArray booksArray = (JSONArray) jsonObject.get("initialInventory");
+		Inventory inventory = Inventory.getInstance();
 		if (booksArray != null) {
 			BookInventoryInfo[] books = new BookInventoryInfo[booksArray.size()];
 			for (int i = 0; i < booksArray.size(); i++) {
@@ -42,11 +42,11 @@ public class BookStoreRunner {
 					books[i] = new BookInventoryInfo(title, amount, price);
 				}
 			}
-			Inventory inventory = Inventory.getInstance();
 			inventory.load(books);
 		}
 		//load the resources holder
 		JSONArray resourcesArray = (JSONArray) jsonObject.get("initialResources");
+		ResourcesHolder resourcesHolder = ResourcesHolder.getInstance();
 		if (resourcesArray != null) {
 			DeliveryVehicle[] vehicles = new DeliveryVehicle[resourcesArray.size()];
 			for (int i = 0; i < resourcesArray.size(); i++) {
@@ -59,23 +59,25 @@ public class BookStoreRunner {
 						vehicles[j] = new DeliveryVehicle(license, speed);}
 				}
 			}
-			ResourcesHolder resourcesHolder = ResourcesHolder.getInstance();
 			resourcesHolder.load(vehicles);
 		}
 		//create micro services
 		JSONObject services = (JSONObject) jsonObject.get("services");
+		List<Thread> allThreads = new LinkedList<>();
 		//create the time service
 		JSONObject timeService = (JSONObject) services.get("time");
 		int speed = (int)timeService.get("speed");
 		int duration = (int)timeService.get("duration");
 		TimeService tService = new TimeService("timeService",speed, duration);
 		Thread timeThread = new Thread(tService);
+		allThreads.add(timeThread);
 		//create selling services
 		int numOfSelling = (int) services.get("selling");
 		SellingService[] sellingArr = new SellingService[numOfSelling];
 		for(int i = 0 ; i<numOfSelling; i++) {
 			sellingArr[i] = new SellingService("sellingService"+i);
 			Thread t = new Thread(sellingArr[i]);
+			allThreads.add(t);
 			t.start();
 		}
 		//create inventory services
@@ -84,6 +86,7 @@ public class BookStoreRunner {
 		for(int i = 0; i<numOfInventory; i++){
 			inventoryArr[i] = new InventoryService("inventoryService"+i);
 			Thread t = new Thread(inventoryArr[i]);
+			allThreads.add(t);
 			t.start();
 		}
 		//create logistic services
@@ -92,6 +95,7 @@ public class BookStoreRunner {
 		for(int i = 0 ; i<numOfLogistic; i++) {
 			logisticArr[i] = new LogisticsService("logistocService"+i);
 			Thread t = new Thread(logisticArr[i]);
+			allThreads.add(t);
 			t.start();
 		}
 		//create resource services
@@ -100,6 +104,7 @@ public class BookStoreRunner {
 		for(int i = 0 ; i<numOfResources; i++) {
 			resourcesArr[i] = new ResourceService("resourceService"+i);
 			Thread t = new Thread(resourcesArr[i]);
+			allThreads.add(t);
 			t.start();
 		}
 		//create customers
@@ -137,8 +142,38 @@ public class BookStoreRunner {
 		for(int i=0; i<APIArr.length; i++){
 			APIArr[i] = new APIService("APIService"+i,customersArr[i] );
 			Thread t = new Thread(APIArr[i]);
+			allThreads.add(t);
 			t.start();
 		}
 		timeThread.start();
+		for(Thread t: allThreads){
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		inventory.printInventoryToFile(args[2]);
+		MoneyRegister money = MoneyRegister.getInstance();
+		money.printOrderReceipts(args[3]);
+		try{
+		FileOutputStream file = new FileOutputStream(args[4]);
+		ObjectOutputStream obj = new ObjectOutputStream(file);
+		obj.writeObject(money);
+		obj.close();
+		file.close();
+		}catch(IOException e){}
+		HashMap<Integer, Customer> customersMap = new HashMap<>();
+		for (Customer c: customersArr){
+			customersMap.put(c.getId(), c);
+		}
+		try{
+			FileOutputStream file = 	new FileOutputStream(args[1]);
+			ObjectOutputStream obj = new ObjectOutputStream(file);
+			obj.writeObject(customersMap);
+			obj.close();
+			file.close();
+		}catch(IOException e){}
 	}
 }
