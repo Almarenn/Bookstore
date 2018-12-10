@@ -29,6 +29,7 @@ public class BookStoreRunner {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		//load the books inventory
 		JSONArray booksArray = (JSONArray) jsonObject.get("initialInventory");
 		if (booksArray != null) {
 			BookInventoryInfo[] books = new BookInventoryInfo[booksArray.size()];
@@ -44,6 +45,7 @@ public class BookStoreRunner {
 			Inventory inventory = Inventory.getInstance();
 			inventory.load(books);
 		}
+		//load the resources holder
 		JSONArray resourcesArray = (JSONArray) jsonObject.get("initialResources");
 		if (resourcesArray != null) {
 			DeliveryVehicle[] vehicles = new DeliveryVehicle[resourcesArray.size()];
@@ -60,31 +62,40 @@ public class BookStoreRunner {
 			ResourcesHolder resourcesHolder = ResourcesHolder.getInstance();
 			resourcesHolder.load(vehicles);
 		}
+		//create micro services
 		JSONObject services = (JSONObject) jsonObject.get("services");
+		//create the time service
 		JSONObject timeService = (JSONObject) services.get("time");
 		int speed = (int)timeService.get("speed");
 		int duration = (int)timeService.get("duration");
 		TimeService tService = new TimeService("timeService",speed, duration);
+		Thread timeThread = new Thread(tService);
+		timeThread.start();
+		//create selling services
 		int numOfSelling = (int) services.get("selling");
 		SellingService[] sellingArr = new SellingService[numOfSelling];
 		for(int i = 0 ; i<numOfSelling; i++) {
 			sellingArr[i] = new SellingService("sellingService"+i);
 		}
+		//create inventory services
 		int numOfInventory = (int) services.get("inventoryService");
 		InventoryService[] inventoryArr = new InventoryService[numOfInventory];
 		for(int i = 0; i<numOfInventory; i++){
 			inventoryArr[i] = new InventoryService("inventoryService"+i);
 		}
+		//create logistic services
 		int numOfLogistic= (int) services.get("logistics");
 		LogisticsService[] logisticArr = new LogisticsService[numOfLogistic];
 		for(int i = 0 ; i<numOfLogistic; i++) {
-			logisticArr[i] = new LogisticsService();
+			logisticArr[i] = new LogisticsService("logistocService"+i);
 		}
+		//create resource services
 		int numOfResources= (int) services.get("resourcesService");
 		ResourceService[] resourcesArr = new ResourceService[numOfResources];
 		for(int i = 0 ; i<numOfResources; i++) {
 			resourcesArr[i] = new ResourceService("resourceService"+i);
 		}
+		//create customers
 		JSONArray customersArray = (JSONArray) jsonObject.get("customers");
 		Customer[] customersArr = new Customer[customersArray.size()];
 		for(int i = 0 ; i<customersArray.size(); i++) {
@@ -114,6 +125,7 @@ public class BookStoreRunner {
 			}
 			customersArr[i] = new Customer(id, name, address, distance, creditCardNum, amount, orderSchedule);
 		}
+		//create API services
 		APIService[] APIArr = new APIService[customersArr.length];
 		for(int i=0; i<APIArr.length; i++){
 			APIArr[i] = new APIService("APIService"+i,customersArr[i] );
