@@ -2,7 +2,6 @@ package bgu.spl.mics.application.passiveObjects;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 
 /**
@@ -16,21 +15,14 @@ public class Customer {
 	private String name;
 	private String address;
 	private int distance;
+	private CreditCard creditCard;
+	private OrderSchedule[] orderSchedule;
 	private List<OrderReceipt> receipts;
-	private int creditCard;
-	private int availableAmount;
-	private HashMap<Integer,List<String>> orderSchedule ;
 	private Semaphore available= new Semaphore(1);
 
-	public Customer(int id, String name, String address, int distance, int creditCardNum, int amount, HashMap<Integer,List<String>> orderSchedule){
-		this.id=id;
-		this.name=name;
-		this.address=address;
-		this.distance=distance;
+
+	public Customer(){
 		receipts = new ArrayList<>();
-		creditCard = creditCardNum;
-		availableAmount=amount;
-		this.orderSchedule = orderSchedule;
 	}
 
 	/**
@@ -76,24 +68,24 @@ public class Customer {
 	 * @return Amount of money left.
 	 */
 	public int getAvailableCreditAmount() {
-		return availableAmount;
+		return this.creditCard.amount;
 	}
 
 	/**
 	 * Retrieves this customers credit card serial number.
 	 */
 	public int getCreditNumber() {
-		return creditCard;
+		return this.creditCard.number;
 	}
 
 	public void pay(int i) {
-		if(i>=availableAmount) {
-			availableAmount = availableAmount-i;
+		if(i>=getAvailableCreditAmount()) {
+			creditCard.amount = getAvailableCreditAmount()-i;
 		}
 	}
 
-	public HashMap<Integer,List<String>>  getOrderSchedule() {
-		return orderSchedule;
+	public OrderSchedule[]  getOrderSchedule() {
+		return this.orderSchedule;
 	}
 
 	public void addReceipt(OrderReceipt orderReceipt){

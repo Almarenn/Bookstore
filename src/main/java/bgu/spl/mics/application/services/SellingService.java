@@ -3,8 +3,9 @@ package bgu.spl.mics.application.services;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.BookOrderEvent;
-import bgu.spl.mics.application.messages.CheckAvailibiltyEvent;
+import bgu.spl.mics.application.messages.CheckAvailabilityEvent;
 import bgu.spl.mics.application.messages.DeliveryEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 
@@ -32,16 +33,19 @@ public class SellingService extends MicroService{
 	@Override
 	protected void initialize() {
 		subscribeEvent(BookOrderEvent.class,event-> {
+			System.out.println(getName()+" got a bookorderevent for: "+event.getBookName());
 			int currTick= this.tick;
 			Customer c= event.getCustomer();
 			try {
 				c.getAvailable().acquire();
 			}
 			catch (InterruptedException e){}
-			CheckAvailibiltyEvent ev= new CheckAvailibiltyEvent(event.getBookName(), c);
+			CheckAvailabilityEvent ev= new CheckAvailabilityEvent(event.getBookName(), c);
 			Future<Integer> f= (Future<Integer>)sendEvent(ev);
-				Integer price = f.get();
-				if (price != -1&& price!=null) {
+			System.out.println(getName()+" sent a checkavailabilityevent for: "+event.getBookName());
+			Integer price = f.get();
+			System.out.println(getName()+" got the book price: "+price);
+				if (price != -1 && price!=null) {
 					moneyRegister.chargeCreditCard(c, price);
 					c.getAvailable().release();
 					recipetNumber = recipetNumber++;
@@ -52,13 +56,18 @@ public class SellingService extends MicroService{
 					DeliveryEvent d = new DeliveryEvent(c.getAddress(), c.getDistance());
 					sendEvent(d);
 				}
-				if(price==null){
+				else{
+					System.out.println(getName()+" couldnt order the book: "+event.getBookName());
 					complete(event,null);
+					System.out.println(getName()+" completed the event with null");
 				}
+				c.getAvailable().release();
 	});
 		subscribeBroadcast(TickBroadcast.class,broadcast->{
 			this.tick=broadcast.get();
 		});
-		}
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
+
 	}
+}
 

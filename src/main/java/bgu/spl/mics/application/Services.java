@@ -1,10 +1,10 @@
 package bgu.spl.mics.application;
 
 import bgu.spl.mics.application.passiveObjects.Customer;
-import bgu.spl.mics.application.services.TimeService;
+import com.google.gson.JsonObject;
 
 public class Services {
-    public TimeService time;
+    public JsonObject time;
     public int selling;
     public int inventoryService;
     public int logistics;

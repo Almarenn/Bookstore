@@ -1,7 +1,8 @@
 package bgu.spl.mics.application.services;
 
 import bgu.spl.mics.MicroService;
-import bgu.spl.mics.application.messages.CheckAvailibiltyEvent;
+import bgu.spl.mics.application.messages.CheckAvailabilityEvent;
+import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
 
 /**
@@ -24,18 +25,24 @@ public class InventoryService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		subscribeEvent(CheckAvailibiltyEvent.class,event-> {
+		System.out.println(getName()+" subscribed to check availability event");
+		subscribeEvent(CheckAvailabilityEvent.class, event-> {
+			System.out.println(getName()+" got a checkavailabilityevent for the book: "+event.getBookName());
 			int price=inventory.checkAvailabilityAndGetPrice(event.getBookName());
-			if(price!=-1 && event.getCustomer().getAvailableCreditAmount()>=price){
-				OrderResult o= inventory.take(event.getBookName());
-				if(o==OrderResult.SUCCESSFULLY_TAKEN){
-					complete(event,price);
+			System.out.println(getName()+": the book "+event.getBookName()+ " price is: "+price);
+			if(price!=-1 && event.getCustomer().getAvailableCreditAmount()>=price) {
+				OrderResult o = inventory.take(event.getBookName());
+				if (o == OrderResult.SUCCESSFULLY_TAKEN) {
+					System.out.println(getName()+" completed the order for "+event.getBookName());
+					complete(event, price);
 				}
-			else
-				complete(event,-1);
-				}
+			}
+			else{
+				System.out.println("client dont have money or book not available");
+				complete(event,-1);}
 			});
-		}
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
+	}
 }
 
 

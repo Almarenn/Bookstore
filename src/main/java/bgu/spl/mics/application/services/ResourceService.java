@@ -28,12 +28,13 @@ public class ResourceService extends MicroService {
 		this.r= ResourcesHolder.getInstance();
 	}
 	
-	//signing for events and broadcasts
 	@Override
 	protected void initialize() {
 		subscribeEvent(findVehicleEvent.class, event->{
+			System.out.println(getName()+" looking for a vehicle");
 			Future<DeliveryVehicle> f = r.acquireVehicle();
 			DeliveryVehicle v=f.get();
+			System.out.println("found a vehicle!!!!!");
 			complete(event, v);
 		});
 		subscribeEvent(releaseVehicleEvent.class, event->{

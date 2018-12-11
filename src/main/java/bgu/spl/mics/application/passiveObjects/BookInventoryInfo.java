@@ -9,16 +9,15 @@ import java.util.concurrent.Semaphore;
  * You may add fields and methods to this class as you see fit (including public methods).
  */
 public class BookInventoryInfo {
-	private int AmountInInventory;
+	private int amount;
 	private String bookTitle;
 	private int price;
 	private Semaphore available;
 
-	public BookInventoryInfo(String name, int price, int amount){
+	public BookInventoryInfo(String name, int amount, int price){
 		this.bookTitle=name;
 		this.price=price;
-		this.AmountInInventory=amount;
-		this.available= new Semaphore(amount);
+		this.amount=amount;
 	}
 
 	/**
@@ -36,12 +35,12 @@ public class BookInventoryInfo {
 	 * @return amount of available books.
 	 */
 	public int getAmountInInventory() {
-		return AmountInInventory;
+		return amount;
 	}
 
 
 	public void setAmountInInventory(int i){
-		this.AmountInInventory=i;
+		this.amount=i;
 	}
 
 	/**
@@ -61,4 +60,8 @@ public class BookInventoryInfo {
 	public Semaphore getAvailable(){
 		return this.available;
 	}
+
+
+	public void setSemaphore(int i){this.available= new Semaphore(i);}
+
 }

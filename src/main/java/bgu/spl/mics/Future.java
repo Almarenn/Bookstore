@@ -31,14 +31,14 @@ public class Future<T> {
      * 	       
      */
 	public synchronized T get(){
-		while (!completed &&!shouldStop){
+		while (!completed && !shouldStop){
 			try {
 				this.wait();}
 			catch (InterruptedException e){
-				shouldStop=true;
+				//shouldStop=true;
 			}
 		}
-			return result;
+		return result;
 	}
 	
 	/**
@@ -47,6 +47,8 @@ public class Future<T> {
 	public synchronized void resolve (T result) {
 		if(result==null){
 			shouldStop=true;
+			this.completed = true;
+			notifyAll();
 		}
 		else {
 			this.result = result;

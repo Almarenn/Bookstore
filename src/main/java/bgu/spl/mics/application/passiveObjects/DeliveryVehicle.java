@@ -1,4 +1,5 @@
 package bgu.spl.mics.application.passiveObjects;
+
 import java.util.concurrent.TimeUnit;
 
 /**

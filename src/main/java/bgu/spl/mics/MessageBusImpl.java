@@ -21,7 +21,6 @@ public class MessageBusImpl implements MessageBus {
 	private ConcurrentHashMap<Event,Future> eventToFuture; // address' of events and the right Future object that was result from it
 	private ConcurrentHashMap<MicroService,List <Class<? extends Event>>> microServiceToSubscribedEvents;
 	private ConcurrentHashMap<MicroService,List<Class<? extends Broadcast>>> microServiceToSubscribedBroadcasts;
-	//semaphore?
 
 	public MessageBusImpl() {
 		serviceToMessageQueue= new ConcurrentHashMap<>();
@@ -116,10 +115,18 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void unregister(MicroService m) {
+		System.out.println(m.getName()+" unregistered from bus");
 		LinkedBlockingQueue<Message> leftovers= serviceToMessageQueue.get(m);
+		System.out.println(leftovers);
+		System.out.println("checking for leftovers");
 		while(!leftovers.isEmpty()){
-			Message mess=leftovers.poll();
+			System.out.println("there are leftovers");
+			Message mess= null;
+			try {
+				mess = leftovers.take();
+			} catch (InterruptedException e) { }
 			m.complete((Event)mess, null);
+			System.out.println(m.getName()+" completed leftovers with null");
 		}
 		serviceToMessageQueue.remove(m);
 		List<Class<? extends Event>> l1=microServiceToSubscribedEvents.get(m);
@@ -137,15 +144,17 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public Message awaitMessage(MicroService m) throws InterruptedException {
-		while (!Thread.currentThread().isInterrupted()) {
-			if (!microServiceToSubscribedEvents.get(m).isEmpty()&&!microServiceToSubscribedBroadcasts.get(m).isEmpty()) {
-				throw new IllegalStateException();
+		Message mess=null;
+		if (!serviceToMessageQueue.containsKey(m)) {
+			throw new IllegalStateException();
+		} else {
+			LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
+			if (messageQueue != null) {
+				try {
+					mess = messageQueue.take();
+				} catch (InterruptedException e) {}
 			}
-			else{
-				LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
-				if(messageQueue!=null){
-				return messageQueue.take();}}
+			return mess;
 		}
-		throw new InterruptedException();
 	}
 }
