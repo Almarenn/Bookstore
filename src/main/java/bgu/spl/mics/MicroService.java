@@ -1,6 +1,7 @@
 package bgu.spl.mics;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * The MicroService is an abstract class that any micro-service in the system
@@ -26,13 +27,15 @@ public abstract class MicroService implements Runnable {
     private boolean terminated = false;
     private final String name;
     private ConcurrentHashMap<Class<? extends Message>, Callback> callBackForMessage;
+    private CountDownLatch d;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
      */
-    public MicroService(String name) {
+    public MicroService(String name, CountDownLatch d) {
         this.name = name;
+        this.d=d;
         bus = MessageBusImpl.getInstance();
         callBackForMessage= new ConcurrentHashMap<>();
     }
@@ -163,6 +166,7 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         bus.register(this);
         initialize();
+        d.countDown();
         while (!terminated) {
             Message m = null;
             try {

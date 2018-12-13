@@ -9,8 +9,8 @@ import java.util.concurrent.Semaphore;
  * You may add fields and methods to this class as you see fit (including public methods).
  */
 public class BookInventoryInfo {
-	private int amount;
 	private String bookTitle;
+	private int amount;
 	private int price;
 	private Semaphore available;
 

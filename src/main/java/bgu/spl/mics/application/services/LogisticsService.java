@@ -11,6 +11,8 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * Logistic service in charge of delivering books that have been purchased to customers.
  * Handles {@link DeliveryEvent}.
@@ -22,8 +24,8 @@ import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
  */
 public class LogisticsService extends MicroService {
 
-	public LogisticsService(String name) {
-		super(name);
+	public LogisticsService(String name,CountDownLatch d) {
+		super(name,d);
 	}
 
 	@Override

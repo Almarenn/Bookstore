@@ -9,6 +9,8 @@ import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.application.Messages.TickBroadcast;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * Selling service in charge of taking orders from customers.
  * Holds a reference to the {@link MoneyRegister} singleton of the store.
@@ -21,13 +23,12 @@ import bgu.spl.mics.application.Messages.TickBroadcast;
  */
 public class SellingService extends MicroService{
 	private MoneyRegister moneyRegister;
-	int recipetNumber=0;
-	int tick=1;
+	private int recipetNumber=0;
+	private int tick=1;
 
-	public SellingService(String name) {
-		super(name);
+	public SellingService(String name, CountDownLatch d) {
+		super(name,d);
 		moneyRegister= MoneyRegister.getInstance();
-
 	}
 
 	@Override

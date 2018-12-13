@@ -8,6 +8,7 @@ import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * TimeService is the global system timer There is only one instance of this micro-service.
@@ -26,8 +27,8 @@ public class TimeService extends MicroService{
 	private int speed;
 	private int duration;
 
-	public TimeService(String name, int speed, int duration) {
-		super(name);
+	public TimeService(String name, int speed, int duration, CountDownLatch d) {
+		super(name,d);
 		this.tick=1;
 		timer= new Timer();
 		this.speed = speed;
@@ -36,23 +37,22 @@ public class TimeService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		terminate();
 		TimerTask t = new TimerTask() {
 			@Override
 			public void run() {
 				if(tick<duration){
-				System.out.println("Tick"+tick);
-				sendBroadcast(new TickBroadcast(tick));
-				tick++;
+					System.out.println("Tick"+tick);
+					sendBroadcast(new TickBroadcast(tick));
+					tick++;
 			}
 				else {
+					System.out.println("Tick"+tick);
 					timer.cancel();
 					timer.purge();
 					sendBroadcast(new TerminateBroadcast());
-					terminate();
 				}
 		}};
 		timer.scheduleAtFixedRate(t,0,speed);
-		terminate();
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}
 }

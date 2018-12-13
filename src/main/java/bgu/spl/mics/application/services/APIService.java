@@ -7,6 +7,7 @@ import bgu.spl.mics.application.messages.BookOrderEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * APIService is in charge of the connection between a client and the store.
@@ -23,8 +24,8 @@ public class APIService extends MicroService{
 	private Customer customer;
 	private List<Future<OrderReceipt>> receipts= new LinkedList<>();
 
-	public APIService(String name,Customer customer) {
-		super(name);
+	public APIService(String name,Customer customer, CountDownLatch d) {
+		super(name,d);
 		this.customer=customer;
 		tickOrders= new HashMap<>();
 		for(OrderSchedule o:customer.getOrderSchedule()) {
@@ -67,6 +68,7 @@ public class APIService extends MicroService{
 				}
 			}
 		});
+
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}
 }
