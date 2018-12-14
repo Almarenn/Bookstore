@@ -40,6 +40,7 @@ public class LogisticsService extends MicroService {
 			if(v!=null){
 			v.deliver(event.getAddress(), event.getDistance());
 			complete(event, true);
+			System.out.println("the Delivery was Completed");
 			System.out.println(getName()+" sent releaseVehicleEvent");
 			sendEvent(new releaseVehicleEvent(v));}
 			else

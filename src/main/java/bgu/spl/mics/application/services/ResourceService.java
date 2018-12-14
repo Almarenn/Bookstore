@@ -46,16 +46,18 @@ public class ResourceService extends MicroService {
 				System.out.println("found a vehicle!!!!!");
 				complete(event, v);
 			}
-			else
+			else {
+				System.out.println("there is no vehicle right now");
 				unsolvedEvent.add(event);
-
+			}
 		});
 		subscribeEvent(releaseVehicleEvent.class, event->{
 			DeliveryVehicle v = event.getVehicleToRelease();
 			r.releaseVehicle(v);
 			complete(event, true);
 			if(!unsolvedEvent.isEmpty()){
-				complete(unsolvedEvent.getFirst(),v);
+				System.out.println("found a vehicle!!!");
+				complete(unsolvedEvent.pollFirst(),v);
 			}
 		} );
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
