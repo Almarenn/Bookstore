@@ -21,7 +21,6 @@ public class InventoryService extends MicroService{
 	private Inventory inventory;
 	private CountDownLatch d;
 
-
 	public InventoryService(String name,CountDownLatch d) {
 		super(name);
 		this.d=d;
@@ -43,7 +42,7 @@ public class InventoryService extends MicroService{
 				}
 			}
 			else{
-				System.out.println("client dont have money or book not available");
+				System.out.println("client does not have enough money or book not available");
 				complete(event,-1);}
 			});
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());

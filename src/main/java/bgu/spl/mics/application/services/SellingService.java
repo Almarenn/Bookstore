@@ -31,7 +31,6 @@ public class SellingService extends MicroService{
 		super(name);
 		moneyRegister= MoneyRegister.getInstance();
 		this.d=d;
-
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class SellingService extends MicroService{
 					sendEvent(d);
 				}
 				else{
-					System.out.println(getName()+" couldnt order the book: "+event.getBookName());
+					System.out.println(getName()+" could not order the book: "+event.getBookName());
 					complete(event,null);
 					System.out.println(getName()+" completed the event with null");
 				}

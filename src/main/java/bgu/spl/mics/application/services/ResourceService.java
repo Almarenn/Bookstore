@@ -56,7 +56,7 @@ public class ResourceService extends MicroService {
 			r.releaseVehicle(v);
 			complete(event, true);
 			if(!unsolvedEvent.isEmpty()){
-				System.out.println("found a vehicle!!!");
+				System.out.println("finally found a vehicle!!!");
 				complete(unsolvedEvent.pollFirst(),v);
 			}
 		} );

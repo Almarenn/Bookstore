@@ -51,7 +51,7 @@ public class BookStoreRunner {
 		//create Selling Service
 		SellingService[] sellingArr = new SellingService[numOfSelling];
 		for(int i = 0 ; i<numOfSelling; i++) {
-			sellingArr[i] = new SellingService("sellingService" + i, d);
+			sellingArr[i] = new SellingService("SellingService " + i, d);
 			Thread t = new Thread(sellingArr[i]);
 			allThreads.add(t);
 			t.start();
@@ -59,7 +59,7 @@ public class BookStoreRunner {
 		//create Inventory Service
 		InventoryService[] inventoryArr = new InventoryService[numOfInventory];
 		for(int i = 0; i<numOfInventory; i++){
-			inventoryArr[i] = new InventoryService("inventoryService"+i,d);
+			inventoryArr[i] = new InventoryService("InventoryService "+i,d);
 			Thread t = new Thread(inventoryArr[i]);
 			allThreads.add(t);
 			t.start();
@@ -67,7 +67,7 @@ public class BookStoreRunner {
 		//create Logistic Service
 		LogisticsService[] logisticArr = new LogisticsService[numOfLogistic];
 		for(int i = 0 ; i<numOfLogistic; i++) {
-			logisticArr[i] = new LogisticsService("logistocService" + i,d);
+			logisticArr[i] = new LogisticsService("LogisticService " + i,d);
 			Thread t = new Thread(logisticArr[i]);
 			allThreads.add(t);
 			t.start();
@@ -75,16 +75,15 @@ public class BookStoreRunner {
 		//create Resources Service
 		ResourceService[] resourcesArr = new ResourceService[numOfResources];
 		for(int i = 0 ; i<numOfResources; i++) {
-			resourcesArr[i] = new ResourceService("resourceService"+i,d);
+			resourcesArr[i] = new ResourceService("ResourceService "+i,d);
 			Thread t = new Thread(resourcesArr[i]);
 			allThreads.add(t);
 			t.start();
 		}
-
 		//create API Services
 		APIService[] APIArr = new APIService[numOfAPI];
 		for(int i=0; i<APIArr.length; i++){
-			APIArr[i] = new APIService("APIService"+i,j.services.customers[i],d);
+			APIArr[i] = new APIService("APIService "+i,j.services.customers[i],d);
 			Thread t = new Thread(APIArr[i]);
 			allThreads.add(t);
 			t.start();
@@ -94,8 +93,6 @@ public class BookStoreRunner {
 		}
 		catch (InterruptedException e){}
 		timeThread.start();
-
-
 		for(Thread t: allThreads){
 			try {
 				t.join();
@@ -103,7 +100,7 @@ public class BookStoreRunner {
 				e.printStackTrace();
 			}
 		}
-
+	//print to output files
 		inventory.printInventoryToFile(args[2]);
 		MoneyRegister money = MoneyRegister.getInstance();
 		money.printOrderReceipts(args[3]);

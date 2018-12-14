@@ -25,7 +25,6 @@ public class APIService extends MicroService{
 	private List<Future<OrderReceipt>> receipts= new LinkedList<>();
 	private CountDownLatch d;
 
-
 	public APIService(String name,Customer customer, CountDownLatch d) {
 		super(name);
 		this.d=d;
@@ -65,13 +64,12 @@ public class APIService extends MicroService{
 				for(Future<OrderReceipt> f : receipts) {
 					System.out.println(getName() + " waiting for receipt");
 					OrderReceipt orderReceipt = f.get();
-					System.out.println(getName() + " got the receipt!!");
+					System.out.println(getName() + " got the receipt!");
 					if (orderReceipt != null) {
 						customer.addReceipt(orderReceipt);}
 				}
 			}
 		});
-
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 		d.countDown();
 	}

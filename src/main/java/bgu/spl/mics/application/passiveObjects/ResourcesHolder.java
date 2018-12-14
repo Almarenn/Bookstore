@@ -1,8 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.Future;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -19,14 +17,11 @@ public class ResourcesHolder {
 	private static class ResourcesHolderHolder {
 		private static ResourcesHolder instance = new ResourcesHolder();
 	}
-//	private LinkedBlockingQueue <Future> futures= new LinkedBlockingQueue<>();
 	private LinkedBlockingQueue <DeliveryVehicle> vehicles= new LinkedBlockingQueue<>();
-//	private ConcurrentHashMap<DeliveryVehicle,Boolean> vehicles = new ConcurrentHashMap<>();
 
 	/**
      * Retrieves the single instance of this class.
      */
-
 	public static ResourcesHolder getInstance() {
 		return ResourcesHolderHolder.instance;
 	}
@@ -41,26 +36,8 @@ public class ResourcesHolder {
 	public Future<DeliveryVehicle> acquireVehicle() {
 		Future<DeliveryVehicle> vehicle = new Future<>();
 		DeliveryVehicle d= vehicles.poll();
-//		if(d==null){
-//			try {
-//				futures.put(vehicle);
-//			}
-//			catch (InterruptedException e){}
-//		}
 		vehicle.resolve(d);
-
-//		boolean found = false;
-//		while (!found) {
-//			for (Map.Entry e : this.vehicles.entrySet()) {
-//				if (e.getValue().equals(true)) {
-//					found = true;
-//					this.vehicles.replace((DeliveryVehicle) e.getKey(), false);
-//					vehicle.resolve((DeliveryVehicle) e.getKey());
-//					break;
-//				}
-//			}
-//		}
-	return vehicle;
+		return vehicle;
 	}
 	
 	/**
