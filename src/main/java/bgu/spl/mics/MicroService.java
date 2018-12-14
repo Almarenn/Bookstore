@@ -27,15 +27,13 @@ public abstract class MicroService implements Runnable {
     private boolean terminated = false;
     private final String name;
     private ConcurrentHashMap<Class<? extends Message>, Callback> callBackForMessage;
-    private CountDownLatch d;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
      */
-    public MicroService(String name, CountDownLatch d) {
+    public MicroService(String name) {
         this.name = name;
-        this.d=d;
         bus = MessageBusImpl.getInstance();
         callBackForMessage= new ConcurrentHashMap<>();
     }
@@ -166,7 +164,6 @@ public abstract class MicroService implements Runnable {
     public final void run() {
         bus.register(this);
         initialize();
-        d.countDown();
         while (!terminated) {
             Message m = null;
             try {

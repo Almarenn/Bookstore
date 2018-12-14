@@ -25,10 +25,13 @@ public class SellingService extends MicroService{
 	private MoneyRegister moneyRegister;
 	private int recipetNumber=0;
 	private int tick=1;
+	private CountDownLatch d;
 
 	public SellingService(String name, CountDownLatch d) {
-		super(name,d);
+		super(name);
 		moneyRegister= MoneyRegister.getInstance();
+		this.d=d;
+
 	}
 
 	@Override
@@ -68,7 +71,7 @@ public class SellingService extends MicroService{
 			this.tick=broadcast.get();
 		});
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
-
+		d.countDown();
 	}
 }
 

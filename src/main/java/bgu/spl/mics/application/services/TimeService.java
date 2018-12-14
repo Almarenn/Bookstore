@@ -27,8 +27,8 @@ public class TimeService extends MicroService{
 	private int speed;
 	private int duration;
 
-	public TimeService(String name, int speed, int duration, CountDownLatch d) {
-		super(name,d);
+	public TimeService(String name, int speed, int duration) {
+		super(name);
 		this.tick=1;
 		timer= new Timer();
 		this.speed = speed;

@@ -23,9 +23,12 @@ public class APIService extends MicroService{
 	private HashMap<Integer, List<String>> tickOrders;
 	private Customer customer;
 	private List<Future<OrderReceipt>> receipts= new LinkedList<>();
+	private CountDownLatch d;
+
 
 	public APIService(String name,Customer customer, CountDownLatch d) {
-		super(name,d);
+		super(name);
+		this.d=d;
 		this.customer=customer;
 		tickOrders= new HashMap<>();
 		for(OrderSchedule o:customer.getOrderSchedule()) {
@@ -70,5 +73,6 @@ public class APIService extends MicroService{
 		});
 
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
+		d.countDown();
 	}
 }

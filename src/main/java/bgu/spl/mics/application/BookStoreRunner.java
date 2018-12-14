@@ -45,7 +45,7 @@ public class BookStoreRunner {
 		//create Time Service
 		Integer speed = j.services.time.get("speed").getAsInt();
 		Integer duration = j.services.time.get("duration").getAsInt();
-		TimeService timeService = new TimeService("timeS", speed,duration, d);
+		TimeService timeService = new TimeService("timeS", speed,duration);
 		Thread timeThread = new Thread(timeService);
 		allThreads.add(timeThread);
 		//create Selling Service

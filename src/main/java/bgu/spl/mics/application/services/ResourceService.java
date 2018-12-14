@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.services;
 
+import bgu.spl.mics.Event;
 import bgu.spl.mics.Future;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
@@ -10,6 +11,7 @@ import bgu.spl.mics.application.passiveObjects.Inventory;
 import bgu.spl.mics.application.passiveObjects.MoneyRegister;
 import bgu.spl.mics.application.passiveObjects.ResourcesHolder;
 
+import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -24,10 +26,14 @@ import java.util.concurrent.CountDownLatch;
 public class ResourceService extends MicroService {
 	
 	private ResourcesHolder r;
+	private CountDownLatch d;
+	private LinkedList<Event> unsolvedEvent;
 
 	public ResourceService(String name, CountDownLatch d) {
-		super(name,d);
+		super(name);
 		this.r= ResourcesHolder.getInstance();
+		this.d=d;
+		unsolvedEvent=new LinkedList<>();
 	}
 	
 	@Override
@@ -36,14 +42,23 @@ public class ResourceService extends MicroService {
 			System.out.println(getName()+" looking for a vehicle");
 			Future<DeliveryVehicle> f = r.acquireVehicle();
 			DeliveryVehicle v=f.get();
-			System.out.println("found a vehicle!!!!!");
-			complete(event, v);
+			if(v!=null){
+				System.out.println("found a vehicle!!!!!");
+				complete(event, v);
+			}
+			else
+				unsolvedEvent.add(event);
+
 		});
 		subscribeEvent(releaseVehicleEvent.class, event->{
 			DeliveryVehicle v = event.getVehicleToRelease();
 			r.releaseVehicle(v);
 			complete(event, true);
+			if(!unsolvedEvent.isEmpty()){
+				complete(unsolvedEvent.getFirst(),v);
+			}
 		} );
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
+		d.countDown();
 	}
 }

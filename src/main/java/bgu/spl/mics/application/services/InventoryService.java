@@ -19,9 +19,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class InventoryService extends MicroService{
 	private Inventory inventory;
+	private CountDownLatch d;
+
 
 	public InventoryService(String name,CountDownLatch d) {
-		super(name,d);
+		super(name);
+		this.d=d;
 		this.inventory= Inventory.getInstance();
 	}
 
@@ -44,6 +47,7 @@ public class InventoryService extends MicroService{
 				complete(event,-1);}
 			});
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
+		d.countDown();
 	}
 }
 

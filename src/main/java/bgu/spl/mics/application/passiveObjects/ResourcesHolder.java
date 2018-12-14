@@ -3,6 +3,7 @@ package bgu.spl.mics.application.passiveObjects;
 import bgu.spl.mics.Future;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Passive object representing the resource manager.
@@ -18,8 +19,9 @@ public class ResourcesHolder {
 	private static class ResourcesHolderHolder {
 		private static ResourcesHolder instance = new ResourcesHolder();
 	}
-
-	private ConcurrentHashMap<DeliveryVehicle,Boolean> vehicles = new ConcurrentHashMap<>();
+//	private LinkedBlockingQueue <Future> futures= new LinkedBlockingQueue<>();
+	private LinkedBlockingQueue <DeliveryVehicle> vehicles= new LinkedBlockingQueue<>();
+//	private ConcurrentHashMap<DeliveryVehicle,Boolean> vehicles = new ConcurrentHashMap<>();
 
 	/**
      * Retrieves the single instance of this class.
@@ -38,18 +40,27 @@ public class ResourcesHolder {
      */
 	public Future<DeliveryVehicle> acquireVehicle() {
 		Future<DeliveryVehicle> vehicle = new Future<>();
-		boolean found = false;
-		while (!found) {
-			for (Map.Entry e : this.vehicles.entrySet()) {
-				if (e.getValue().equals(true)) {
-					found = true;
-					this.vehicles.replace((DeliveryVehicle) e.getKey(), false);
-					vehicle.resolve((DeliveryVehicle) e.getKey());
-					break;
-				}
-			}
-		}
-		return vehicle;
+		DeliveryVehicle d= vehicles.poll();
+//		if(d==null){
+//			try {
+//				futures.put(vehicle);
+//			}
+//			catch (InterruptedException e){}
+//		}
+		vehicle.resolve(d);
+
+//		boolean found = false;
+//		while (!found) {
+//			for (Map.Entry e : this.vehicles.entrySet()) {
+//				if (e.getValue().equals(true)) {
+//					found = true;
+//					this.vehicles.replace((DeliveryVehicle) e.getKey(), false);
+//					vehicle.resolve((DeliveryVehicle) e.getKey());
+//					break;
+//				}
+//			}
+//		}
+	return vehicle;
 	}
 	
 	/**
@@ -59,7 +70,11 @@ public class ResourcesHolder {
      * @param vehicle	{@link DeliveryVehicle} to be released.
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
-		this.vehicles.replace(vehicle,true);
+		System.out.println("Released vehicle!");
+		try {
+			vehicles.put(vehicle);
+			}
+		catch (InterruptedException e){}
 	}
 	
 	/**
@@ -69,7 +84,10 @@ public class ResourcesHolder {
      */
 	public void load(DeliveryVehicle[] vehicles) {
 		for (DeliveryVehicle v : vehicles) {
-			this.vehicles.put(v, true);
+			try {
+				this.vehicles.put(v);
+			}
+			catch(InterruptedException e){}
 		}
 	}
 }
