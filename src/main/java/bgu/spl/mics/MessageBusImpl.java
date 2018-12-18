@@ -12,154 +12,157 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private static class MessageBusHolder {
-		private static MessageBusImpl instance = new MessageBusImpl();
-	}
-	private ConcurrentHashMap <MicroService, LinkedBlockingQueue<Message>> serviceToMessageQueue; // services and the right MessageQueue that belongs to the service
-	private ConcurrentHashMap<Class<? extends Event>, LinkedBlockingQueue<MicroService>> eventToMicrosSrviceQueue; //events and the right MicroServices queue of all micro services that registered to this event
-	private ConcurrentHashMap<Class<? extends Broadcast>,List <MicroService>> broadcastToMicroServiceList; // broadcasts and the right MicroServices list of all services that registered to this broadcast
-	private ConcurrentHashMap<Event,Future> eventToFuture; // address' of events and the right Future object that was result from it
-	private ConcurrentHashMap<MicroService,List <Class<? extends Event>>> microServiceToSubscribedEvents;
-	private ConcurrentHashMap<MicroService,List<Class<? extends Broadcast>>> microServiceToSubscribedBroadcasts;
+    private static class MessageBusHolder {
+        private static MessageBusImpl instance = new MessageBusImpl();
+    }
 
-	public MessageBusImpl() {
-		serviceToMessageQueue= new ConcurrentHashMap<>();
-		eventToMicrosSrviceQueue = new ConcurrentHashMap<>();
-		broadcastToMicroServiceList= new ConcurrentHashMap<>();
-		eventToFuture = new ConcurrentHashMap<>();
-		microServiceToSubscribedEvents = new ConcurrentHashMap<>();
-		microServiceToSubscribedBroadcasts= new ConcurrentHashMap<>();
-	}
+    private ConcurrentHashMap<MicroService, LinkedBlockingQueue<Message>> serviceToMessageQueue; // services and the right MessageQueue that belongs to the service
+    private ConcurrentHashMap<Class<? extends Event>, LinkedBlockingQueue<MicroService>> eventToMicrosSrviceQueue; //events and the right MicroServices queue of all micro services that registered to this event
+    private ConcurrentHashMap<Class<? extends Broadcast>, List<MicroService>> broadcastToMicroServiceList; // broadcasts and the right MicroServices list of all services that registered to this broadcast
+    private ConcurrentHashMap<Event, Future> eventToFuture; // address' of events and the right Future object that was result from it
+    private ConcurrentHashMap<MicroService, List<Class<? extends Event>>> microServiceToSubscribedEvents;
+    private ConcurrentHashMap<MicroService, List<Class<? extends Broadcast>>> microServiceToSubscribedBroadcasts;
 
-	public static MessageBusImpl getInstance() {
-		return MessageBusHolder.instance;
-	}
+    public MessageBusImpl() {
+        serviceToMessageQueue = new ConcurrentHashMap<>();
+        eventToMicrosSrviceQueue = new ConcurrentHashMap<>();
+        broadcastToMicroServiceList = new ConcurrentHashMap<>();
+        eventToFuture = new ConcurrentHashMap<>();
+        microServiceToSubscribedEvents = new ConcurrentHashMap<>();
+        microServiceToSubscribedBroadcasts = new ConcurrentHashMap<>();
+    }
 
-	@Override
-	public synchronized <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-		LinkedBlockingQueue<MicroService> q;
-		if(!this.eventToMicrosSrviceQueue.containsKey(type)){
-			q= new LinkedBlockingQueue<>();
-			this.eventToMicrosSrviceQueue.put(type, q);
-		}
-		else
-			q=this.eventToMicrosSrviceQueue.get(type);
-		try{
-			q.put(m);}
-				catch (InterruptedException e){}
-		microServiceToSubscribedEvents.get(m).add(type);
-	}
+    public static MessageBusImpl getInstance() {
+        return MessageBusHolder.instance;
+    }
 
-	@Override
-	public synchronized void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-		List<MicroService> l;
-		if(!this.broadcastToMicroServiceList.containsKey(type)){
-			l= new LinkedList<>();
-			this.broadcastToMicroServiceList.put(type,l);
-		}
-		else
-			l=this.broadcastToMicroServiceList.get(type);
-		l.add(m);
-		microServiceToSubscribedBroadcasts.get(m).add(type);
-	}
+    @Override
+    public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
+        LinkedBlockingQueue<MicroService> q;
+        if (!this.eventToMicrosSrviceQueue.containsKey(type)) {
+            q = new LinkedBlockingQueue<>();
+            this.eventToMicrosSrviceQueue.put(type, q);
+        } else
+            q = this.eventToMicrosSrviceQueue.get(type);
+        try {
+            q.put(m);
+        } catch (InterruptedException e) {
+        }
+        microServiceToSubscribedEvents.get(m).add(type);
+    }
 
-	@Override
-	public synchronized  <T> void complete(Event<T> e, T result) {
-		Future f=eventToFuture.get(e);
-		f.resolve(result);
-	}
+    @Override
+    public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
+        List<MicroService> l;
+        if (!this.broadcastToMicroServiceList.containsKey(type)) {
+            l = new LinkedList<>();
+            this.broadcastToMicroServiceList.put(type, l);
+        } else
+            l = this.broadcastToMicroServiceList.get(type);
+        l.add(m);
+        microServiceToSubscribedBroadcasts.get(m).add(type);
+    }
 
-	@Override
-	public void sendBroadcast(Broadcast b) {
-		List <MicroService>l= broadcastToMicroServiceList.get(b.getClass());
-		synchronized (l) {
-			if (l != null && !l.isEmpty()) {
-				for (MicroService ms : l) {
-					LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(ms);
-					synchronized (messageQueue) {
-						try {
-							messageQueue.put(b);
-						} catch (InterruptedException e) {
-						}
-					}
-				}
-			}
-		}
-	}
+    @Override
+    public synchronized <T> void complete(Event<T> e, T result) {
+        Future f = eventToFuture.get(e);
+        f.resolve(result);
+    }
 
-	
-	@Override
-	public <T> Future<T> sendEvent(Event<T> e) {
-		LinkedBlockingQueue<MicroService> microServiceQueue = eventToMicrosSrviceQueue.get(e.getClass());
-		synchronized (microServiceQueue) {
-			if (microServiceQueue == null || microServiceQueue.isEmpty()) {
-			return null;
-		}
-		Future f = new Future();
-		eventToFuture.put(e, f);
-			MicroService m = microServiceQueue.poll();
-					LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
-					try {
-						messageQueue.put(e);
-					} catch (InterruptedException s) {
-					}
-					try {
-						microServiceQueue.put(m);
-					} catch (InterruptedException s) {
-					}
-					return f; }
-	}
+    @Override
+    public void sendBroadcast(Broadcast b) {
+        List<MicroService> l = broadcastToMicroServiceList.get(b.getClass());
+        synchronized (l) {
+            if (l != null && !l.isEmpty()) {
+                for (MicroService ms : l) {
+                    LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(ms);
+                    synchronized (messageQueue) {
+                        try {
+                            messageQueue.put(b);
+                        } catch (InterruptedException e) {
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	@Override
-	public void register(MicroService m) {
-		LinkedBlockingQueue<Message> myQueue= new LinkedBlockingQueue<>();
-		serviceToMessageQueue.put(m,myQueue);
-		microServiceToSubscribedEvents.put(m,new LinkedList<>());
-		microServiceToSubscribedBroadcasts.put(m,new LinkedList<>());
-	}
 
-	@Override
-	public void unregister(MicroService m) {
-		synchronized (m){
-		LinkedBlockingQueue<Message> leftovers= serviceToMessageQueue.get(m);
-		while(!leftovers.isEmpty()){
-			Message mess= null;
-			try {
-				mess = leftovers.take();
-			} catch (InterruptedException e) { }
-			m.complete((Event)mess, null);
-		}
-		List<Class<? extends Event>> l1=microServiceToSubscribedEvents.get(m);
-		List<Class<? extends Broadcast>> l2=microServiceToSubscribedBroadcasts.get(m);
-		for(Class<? extends Event> ev:l1){
-			LinkedBlockingQueue myQueue= eventToMicrosSrviceQueue.get(ev);
-			synchronized (myQueue){
-			myQueue.remove(m);
-		}}
-		for(Class<? extends Broadcast> br:l2){
-			List myList= broadcastToMicroServiceList.get(br);
-			synchronized (myList){
-			myList.remove(m);
-		}}
-		serviceToMessageQueue.remove(m);
+    @Override
+    public <T> Future<T> sendEvent(Event<T> e) {
+        LinkedBlockingQueue<MicroService> microServiceQueue = eventToMicrosSrviceQueue.get(e.getClass());
+        synchronized (microServiceQueue) {
+            if (microServiceQueue == null || microServiceQueue.isEmpty()) {
+                return null;
+            }
+            Future f = new Future();
+            eventToFuture.put(e, f);
+            MicroService m = microServiceQueue.poll();
+            LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
+            try {
+                messageQueue.put(e);
+            } catch (InterruptedException s) {
+            }
+            try {
+                microServiceQueue.put(m);
+            } catch (InterruptedException s) {
+            }
+            return f;
+        }
+    }
 
-		}
-		System.out.println(m.getName()+" unregistered from bus");
-	}
+    @Override
+    public void register(MicroService m) {
+        LinkedBlockingQueue<Message> myQueue = new LinkedBlockingQueue<>();
+        serviceToMessageQueue.put(m, myQueue);
+        microServiceToSubscribedEvents.put(m, new LinkedList<>());
+        microServiceToSubscribedBroadcasts.put(m, new LinkedList<>());
+    }
 
-	@Override
-	public Message awaitMessage(MicroService m) throws InterruptedException {
-		Message mess=null;
-		if (!serviceToMessageQueue.containsKey(m)) {
-			throw new IllegalStateException();
-		} else {
-			LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
-			if (messageQueue != null) {
-				try {
-					mess = messageQueue.take();
-				} catch (InterruptedException e) {}
-			}
-			return mess;
-		}
-	}
+    @Override
+    public void unregister(MicroService m) {
+        List<Class<? extends Event>> l1 = microServiceToSubscribedEvents.get(m);
+        for (Class<? extends Event> ev : l1) {
+            LinkedBlockingQueue myQueue = eventToMicrosSrviceQueue.get(ev);
+            synchronized (myQueue) {
+                myQueue.remove(m);
+            }
+        }
+        List<Class<? extends Broadcast>> l2 = microServiceToSubscribedBroadcasts.get(m);
+        for (Class<? extends Broadcast> br : l2) {
+            List myList = broadcastToMicroServiceList.get(br);
+            synchronized (myList) {
+                myList.remove(m);
+            }
+        }
+        LinkedBlockingQueue<Message> leftovers = serviceToMessageQueue.get(m);
+        synchronized (leftovers){
+        while (!leftovers.isEmpty()) {
+            Message mess = null;
+            try {
+                mess = leftovers.take();
+            } catch (InterruptedException e) {
+            }
+            m.complete((Event) mess, null);
+        }
+        serviceToMessageQueue.remove(m);}
+        System.out.println(m.getName() + " unregistered from bus");
+    }
+
+    @Override
+    public Message awaitMessage(MicroService m) throws InterruptedException {
+        Message mess = null;
+        if (!serviceToMessageQueue.containsKey(m)) {
+            throw new IllegalStateException();
+        } else {
+            LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
+            if (messageQueue != null) {
+                try {
+                    mess = messageQueue.take();
+                } catch (InterruptedException e) {
+                }
+            }
+            return mess;
+        }
+    }
 }

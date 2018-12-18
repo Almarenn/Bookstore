@@ -35,6 +35,9 @@ public class SellingService extends MicroService{
 
 	@Override
 	protected void initialize() {
+		subscribeBroadcast(TickBroadcast.class,broadcast->{
+			this.tick=broadcast.get();
+		});
 		subscribeEvent(BookOrderEvent.class,event-> {
 			int currTick= this.tick;
 			Customer c= event.getCustomer();
@@ -65,9 +68,6 @@ public class SellingService extends MicroService{
 			}
 				c.getAvailable().release();
 	});
-		subscribeBroadcast(TickBroadcast.class,broadcast->{
-			this.tick=broadcast.get();
-		});
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 		d.countDown();
 	}
