@@ -47,7 +47,6 @@ public class ResourcesHolder {
      * @param vehicle	{@link DeliveryVehicle} to be released.
      */
 	public void releaseVehicle(DeliveryVehicle vehicle) {
-		System.out.println("Released vehicle!");
 		try {
 			vehicles.put(vehicle);
 			}

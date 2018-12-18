@@ -39,15 +39,12 @@ public class ResourceService extends MicroService {
 	@Override
 	protected void initialize() {
 		subscribeEvent(findVehicleEvent.class, event->{
-			System.out.println(getName()+" looking for a vehicle");
 			Future<DeliveryVehicle> f = r.acquireVehicle();
 			DeliveryVehicle v=f.get();
 			if(v!=null){
-				System.out.println("found a vehicle!!!!!");
 				complete(event, v);
 			}
 			else {
-				System.out.println("there is no vehicle right now");
 				unsolvedEvent.add(event);
 			}
 		});
@@ -56,11 +53,14 @@ public class ResourceService extends MicroService {
 			r.releaseVehicle(v);
 			complete(event, true);
 			if(!unsolvedEvent.isEmpty()){
-				System.out.println("finally found a vehicle!!!");
 				complete(unsolvedEvent.pollFirst(),v);
 			}
 		} );
-		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->{
+				for(Event e: unsolvedEvent){
+					complete(e,null);
+				}
+				terminate();});
 		d.countDown();
 	}
 }

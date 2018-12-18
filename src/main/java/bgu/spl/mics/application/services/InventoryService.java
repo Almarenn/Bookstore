@@ -29,20 +29,15 @@ public class InventoryService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		System.out.println(getName()+" subscribed to check availability event");
 		subscribeEvent(CheckAvailabilityEvent.class, event-> {
-			System.out.println(getName()+" got a checkavailabilityevent for the book: "+event.getBookName());
 			int price=inventory.checkAvailabilityAndGetPrice(event.getBookName());
-			System.out.println(getName()+": the book "+event.getBookName()+ " price is: "+price);
 			if(price!=-1 && event.getCustomer().getAvailableCreditAmount()>=price) {
 				OrderResult o = inventory.take(event.getBookName());
 				if (o == OrderResult.SUCCESSFULLY_TAKEN) {
-					System.out.println(getName()+" completed the order for "+event.getBookName());
 					complete(event, price);
 				}
 			}
 			else{
-				System.out.println("client does not have enough money or book not available");
 				complete(event,-1);}
 			});
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());

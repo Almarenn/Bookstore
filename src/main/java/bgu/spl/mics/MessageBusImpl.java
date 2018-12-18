@@ -72,37 +72,42 @@ public class MessageBusImpl implements MessageBus {
 	@Override
 	public void sendBroadcast(Broadcast b) {
 		List <MicroService>l= broadcastToMicroServiceList.get(b.getClass());
-		if(l!=null && !l.isEmpty()) {
-			for (MicroService ms : l) {
-				LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(ms);
-				synchronized (messageQueue){
-				try{
-					messageQueue.put(b);}
-				catch (InterruptedException e){}
-			}}
+		synchronized (l) {
+			if (l != null && !l.isEmpty()) {
+				for (MicroService ms : l) {
+					LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(ms);
+					synchronized (messageQueue) {
+						try {
+							messageQueue.put(b);
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+			}
 		}
 	}
 
 	
 	@Override
 	public <T> Future<T> sendEvent(Event<T> e) {
-		LinkedBlockingQueue<MicroService> microServiceQueue= eventToMicrosSrviceQueue.get(e.getClass());
-		if(microServiceQueue==null|| microServiceQueue.isEmpty()){
+		LinkedBlockingQueue<MicroService> microServiceQueue = eventToMicrosSrviceQueue.get(e.getClass());
+		synchronized (microServiceQueue) {
+			if (microServiceQueue == null || microServiceQueue.isEmpty()) {
 			return null;
 		}
-		Future f= new Future();
-		eventToFuture.put(e,f);
-		synchronized (microServiceQueue){
-		MicroService m=microServiceQueue.poll();
-		LinkedBlockingQueue<Message> messageQueue= serviceToMessageQueue.get(m);
-		try{
-				messageQueue.put(e);}
-			catch (InterruptedException s){}
-		try{
-			microServiceQueue.put(m);}
-			catch (InterruptedException s){}
-		}
-		return f;
+		Future f = new Future();
+		eventToFuture.put(e, f);
+			MicroService m = microServiceQueue.poll();
+					LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
+					try {
+						messageQueue.put(e);
+					} catch (InterruptedException s) {
+					}
+					try {
+						microServiceQueue.put(m);
+					} catch (InterruptedException s) {
+					}
+					return f; }
 	}
 
 	@Override
@@ -115,20 +120,15 @@ public class MessageBusImpl implements MessageBus {
 
 	@Override
 	public void unregister(MicroService m) {
-		System.out.println(m.getName()+" unregistered from bus");
+		synchronized (m){
 		LinkedBlockingQueue<Message> leftovers= serviceToMessageQueue.get(m);
-		System.out.println(leftovers);
-		System.out.println("checking for leftovers");
 		while(!leftovers.isEmpty()){
-			System.out.println("there are leftovers");
 			Message mess= null;
 			try {
 				mess = leftovers.take();
 			} catch (InterruptedException e) { }
 			m.complete((Event)mess, null);
-			System.out.println(m.getName()+" completed leftovers with null");
 		}
-		serviceToMessageQueue.remove(m);
 		List<Class<? extends Event>> l1=microServiceToSubscribedEvents.get(m);
 		List<Class<? extends Broadcast>> l2=microServiceToSubscribedBroadcasts.get(m);
 		for(Class<? extends Event> ev:l1){
@@ -138,8 +138,13 @@ public class MessageBusImpl implements MessageBus {
 		}}
 		for(Class<? extends Broadcast> br:l2){
 			List myList= broadcastToMicroServiceList.get(br);
+			synchronized (myList){
 			myList.remove(m);
+		}}
+		serviceToMessageQueue.remove(m);
+
 		}
+		System.out.println(m.getName()+" unregistered from bus");
 	}
 
 	@Override

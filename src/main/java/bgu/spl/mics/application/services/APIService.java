@@ -43,31 +43,22 @@ public class APIService extends MicroService{
 
 	@Override
 	protected void initialize() {
-		System.out.println(getName()+" tickorders: "+tickOrders);
-		System.out.println(getName()+" subscribed to tickbroadcast");
 		subscribeBroadcast(TickBroadcast.class, broadcast-> {
 			this.tick=broadcast.get();
-			System.out.println(getName()+" got tickbroadcast: "+this.tick);
 			List<String> books= this.tickOrders.get(this.tick);
-			System.out.println(getName()+" books to order in "+tick+": "+books);
 			if(books!=null) {
 				for (String s : books) {
 					BookOrderEvent ev = new BookOrderEvent(s, customer, this.tick);
-					System.out.println(getName() + " sent bookorderevent: " + s);
 					Future<OrderReceipt> futureObject = sendEvent(ev);
-					System.out.println(getName()+" created future receipt for: "+s);
 					receipts.add(futureObject);
-					System.out.println(getName()+" added future receipt for: "+s);
 
 				}
-				System.out.println("amount of waiting receipts: "+receipts.size());
 				for(Future<OrderReceipt> f : receipts) {
-					System.out.println(getName() + " waiting for receipt");
-					OrderReceipt orderReceipt = f.get();
-					System.out.println(getName() + " got the receipt!");
-					if (orderReceipt != null) {
-						customer.addReceipt(orderReceipt);}
-				}
+					if(f!=null){
+						OrderReceipt orderReceipt = f.get();
+						if (orderReceipt != null) {
+							customer.addReceipt(orderReceipt);}
+				}}
 			}
 		});
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());

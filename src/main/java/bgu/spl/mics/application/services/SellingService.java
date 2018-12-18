@@ -36,7 +36,6 @@ public class SellingService extends MicroService{
 	@Override
 	protected void initialize() {
 		subscribeEvent(BookOrderEvent.class,event-> {
-			System.out.println(getName()+" got a bookorderevent for: "+event.getBookName());
 			int currTick= this.tick;
 			Customer c= event.getCustomer();
 			try {
@@ -45,10 +44,9 @@ public class SellingService extends MicroService{
 			catch (InterruptedException e){}
 			CheckAvailabilityEvent ev= new CheckAvailabilityEvent(event.getBookName(), c);
 			Future<Integer> f= (Future<Integer>)sendEvent(ev);
-			System.out.println(getName()+" sent a checkavailabilityevent for: "+event.getBookName());
+			if(f!=null){
 			Integer price = f.get();
-			System.out.println(getName()+" got the book price: "+price);
-				if (price != -1 && price!=null) {
+				if (price!=null && price != -1) {
 					moneyRegister.chargeCreditCard(c, price);
 					c.getAvailable().release();
 					recipetNumber = recipetNumber++;
@@ -60,10 +58,11 @@ public class SellingService extends MicroService{
 					sendEvent(d);
 				}
 				else{
-					System.out.println(getName()+" could not order the book: "+event.getBookName());
 					complete(event,null);
-					System.out.println(getName()+" completed the event with null");
-				}
+				}}
+			else{
+				complete(event,null);
+			}
 				c.getAvailable().release();
 	});
 		subscribeBroadcast(TickBroadcast.class,broadcast->{

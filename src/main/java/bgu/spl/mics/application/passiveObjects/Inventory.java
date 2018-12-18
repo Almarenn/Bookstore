@@ -64,14 +64,11 @@ public class Inventory {
      */
 	public OrderResult take (String book) {
 		BookInventoryInfo b=inventory.get(book);
-		System.out.println("amount in inventory before: "+b.getAmountInInventory());
 		Semaphore available = inventory.get(book).getAvailable();
-		System.out.println("available semaphore: "+available);
 		if(available.tryAcquire()==false){
 			return OrderResult.NOT_IN_STOCK;
 		}
 		b.setAmountInInventory(b.getAmountInInventory()-1);
-		System.out.println("amount in inventory after: "+b.getAmountInInventory());
 		return OrderResult.SUCCESSFULLY_TAKEN;
 	}
 	
@@ -83,7 +80,6 @@ public class Inventory {
      */
 	public int checkAvailabilityAndGetPrice(String book){
 		int b= inventory.get(book).getAmountInInventory();
-		System.out.println(book+" amount in inventory: "+b);
 		if(b==0){
 			return -1;
 		}

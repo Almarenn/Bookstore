@@ -1,5 +1,6 @@
 package bgu.spl.mics.application.passiveObjects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -10,7 +11,7 @@ import java.util.concurrent.Semaphore;
  * <p>
  * You may add fields and methods to this class as you see fit (including public methods).
  */
-public class Customer {
+public class Customer implements Serializable {
 	private int id;
 	private String name;
 	private String address;
@@ -68,24 +69,24 @@ public class Customer {
 	 * @return Amount of money left.
 	 */
 	public int getAvailableCreditAmount() {
-		return this.creditCard.amount;
+		return creditCard.amount;
 	}
 
 	/**
 	 * Retrieves this customers credit card serial number.
 	 */
 	public int getCreditNumber() {
-		return this.creditCard.number;
+		return creditCard.number;
 	}
 
 	public void pay(int i) {
-		if(i>=getAvailableCreditAmount()) {
+		if(i<=getAvailableCreditAmount()) {
 			creditCard.amount = getAvailableCreditAmount()-i;
 		}
 	}
 
 	public OrderSchedule[]  getOrderSchedule() {
-		return this.orderSchedule;
+		return orderSchedule;
 	}
 
 	public void addReceipt(OrderReceipt orderReceipt){

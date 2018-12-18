@@ -62,13 +62,13 @@ public class MoneyRegister implements Serializable {
      * This method is called by the main method in order to generate the output.
      */
 	public void printOrderReceipts(String filename) {
-		try{
-			FileOutputStream file = 	new FileOutputStream(filename);
+		try {
+			FileOutputStream file = new FileOutputStream(filename);
 			ObjectOutputStream obj = new ObjectOutputStream(file);
 			obj.writeObject(receipts);
 			obj.close();
 			file.close();
+		} catch (IOException e) {
 		}
-		catch(IOException e){}
 	}
 }
