@@ -38,30 +38,34 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
+        synchronized (type){
         LinkedBlockingQueue<MicroService> q;
         if (!this.eventToMicrosSrviceQueue.containsKey(type)) {
             q = new LinkedBlockingQueue<>();
             this.eventToMicrosSrviceQueue.put(type, q);
         } else
             q = this.eventToMicrosSrviceQueue.get(type);
+        synchronized (q){
         try {
             q.put(m);
         } catch (InterruptedException e) {
-        }
+        }}
         microServiceToSubscribedEvents.get(m).add(type);
-    }
+    }}
 
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
+        synchronized (type){
         List<MicroService> l;
         if (!this.broadcastToMicroServiceList.containsKey(type)) {
             l = new LinkedList<>();
             this.broadcastToMicroServiceList.put(type, l);
         } else
             l = this.broadcastToMicroServiceList.get(type);
+        synchronized (l){
         l.add(m);
         microServiceToSubscribedBroadcasts.get(m).add(type);
-    }
+    }}}
 
     @Override
     public synchronized <T> void complete(Event<T> e, T result) {
