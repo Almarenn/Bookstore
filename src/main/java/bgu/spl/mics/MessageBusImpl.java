@@ -163,8 +163,7 @@ public class MessageBusImpl implements MessageBus {
             if (messageQueue != null) {
                 try {
                     mess = messageQueue.take();
-                } catch (InterruptedException e) {
-                }
+                } catch (InterruptedException e) { }
             }
             return mess;
         }
