@@ -37,6 +37,7 @@ public class TimeService extends MicroService{
 
 	@Override
 	protected void initialize() {
+		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 		TimerTask t = new TimerTask() {
 			@Override
 			public void run() {
@@ -51,6 +52,5 @@ public class TimeService extends MicroService{
 				}
 		}};
 		timer.scheduleAtFixedRate(t,0,speed);
-		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 	}
 }
