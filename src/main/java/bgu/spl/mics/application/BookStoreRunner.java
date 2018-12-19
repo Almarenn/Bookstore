@@ -102,10 +102,8 @@ public class BookStoreRunner {
 		}
 	//print to output files
 		inventory.printInventoryToFile(args[2]);
-//		Object deInventory = Deserialaze(args[2]);
 		MoneyRegister money = MoneyRegister.getInstance();
 		money.printOrderReceipts(args[3]);
-//		Object deReceipts=Deserialaze(args[3]);
 		try{
 		FileOutputStream file = new FileOutputStream(args[4]);
 		ObjectOutputStream obj = new ObjectOutputStream(file);
@@ -113,7 +111,6 @@ public class BookStoreRunner {
 		obj.close();
 		file.close();
 		}catch(IOException e){}
-//		Object deMoney= Deserialaze(args[4]);
 		HashMap<Integer, Customer> customersMap = new HashMap<>();
 		for (Customer c: j.services.customers){
 			customersMap.put(c.getId(), c);
@@ -125,25 +122,7 @@ public class BookStoreRunner {
 			obj.close();
 			file.close();
 		}catch(IOException e){}
-//		Object deCustomer= Deserialaze(args[1]);
 	}
-
-//	public static Object Deserialaze(String s){
-//		Object o=null;
-//		try {
-//			FileInputStream fileIn = new FileInputStream(s);
-//			ObjectInputStream in = new ObjectInputStream(fileIn);
-//			o = in.readObject();
-//			in.close();
-//			fileIn.close();
-//		} catch (IOException i) {
-//			i.printStackTrace();
-//		} catch (ClassNotFoundException c) {
-//			System.out.println("class not found");
-//			c.printStackTrace();
-//		}
-//		return o;
-//	}
 
 
 
