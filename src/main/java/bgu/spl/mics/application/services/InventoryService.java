@@ -37,9 +37,6 @@ public class InventoryService extends MicroService{
 				else{
 					complete(event,-1);
 				}
-				else{
-					complete(event,-1);
-				}
 			}
 			else{
 				complete(event,-1);}
