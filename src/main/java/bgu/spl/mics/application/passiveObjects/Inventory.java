@@ -27,11 +27,6 @@ public class Inventory {
 	
 	private Inventory() {}
 
-	//test only method!!
-	public void reset(){
-		this.inventory=null;
-	}
-
 	/**
      * Retrieves the single instance of this class.
      */
@@ -68,8 +63,9 @@ public class Inventory {
 		if(available.tryAcquire()==false){
 			return OrderResult.NOT_IN_STOCK;
 		}
+		else{
 		b.setAmountInInventory(b.getAmountInInventory()-1);
-		return OrderResult.SUCCESSFULLY_TAKEN;
+		return OrderResult.SUCCESSFULLY_TAKEN;}
 	}
 	
 	/**
@@ -110,5 +106,10 @@ public class Inventory {
 		file.close();
 		}
 		catch(IOException e){}
+	}
+
+	//test only method!!
+	public void reset(){
+		this.inventory=null;
 	}
 }

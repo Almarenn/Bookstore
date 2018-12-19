@@ -4,7 +4,6 @@ import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.CheckAvailabilityEvent;
 import bgu.spl.mics.application.messages.TerminateBroadcast;
 import bgu.spl.mics.application.passiveObjects.*;
-
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -34,7 +33,9 @@ public class InventoryService extends MicroService{
 			if(price!=-1 && event.getCustomer().getAvailableCreditAmount()>=price) {
 				OrderResult o = inventory.take(event.getBookName());
 				if (o == OrderResult.SUCCESSFULLY_TAKEN) {
-					complete(event, price);
+					complete(event, price);}
+				else{
+					complete(event,-1);
 				}
 			}
 			else{

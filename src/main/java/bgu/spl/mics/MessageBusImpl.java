@@ -100,7 +100,8 @@ public class MessageBusImpl implements MessageBus {
                 return null;
             }
             Future f = new Future();
-            eventToFuture.put(e, f);
+            synchronized (eventToFuture){
+            eventToFuture.put(e, f);}
             MicroService m = microServiceQueue.poll();
             LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
             try {
@@ -150,7 +151,6 @@ public class MessageBusImpl implements MessageBus {
             m.complete((Event) mess, null);
         }
         serviceToMessageQueue.remove(m);}
-        System.out.println(m.getName() + " unregistered from bus");
     }
 
     @Override

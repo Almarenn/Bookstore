@@ -50,5 +50,4 @@ public class DeliveryVehicle {
 		} catch (InterruptedException e) {
 		}
 	}
-
 }

@@ -63,5 +63,4 @@ public class BookInventoryInfo {
 
 
 	public void setSemaphore(int i){this.available= new Semaphore(i);}
-
 }

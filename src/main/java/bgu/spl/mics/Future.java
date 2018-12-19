@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit;
 public class Future<T> {
 	private boolean completed;
 	private T result;
-	private boolean shouldStop= false;
 	/**
 	 * This should be the the only public constructor in this class.
 	 */
@@ -31,7 +30,7 @@ public class Future<T> {
      * 	       
      */
 	public synchronized T get(){
-		while (!completed && !shouldStop){
+		while (!isDone()){
 			try {
 				this.wait();}
 			catch (InterruptedException e){
@@ -44,16 +43,9 @@ public class Future<T> {
      * Resolves the result of this Future object.
      */
 	public synchronized void resolve (T result) {
-		if(result==null){
-			shouldStop=true;
-			this.completed = true;
-			notifyAll();
-		}
-		else {
 			this.result = result;
 			this.completed = true;
 			notifyAll();
-		}
 	}
 	
 	/**
@@ -79,7 +71,7 @@ public class Future<T> {
      */
 	public synchronized T get(long timeout, TimeUnit unit) {
 		long time=unit.convert(timeout,TimeUnit.MILLISECONDS);
-		if (!completed) {
+		if (!isDone()) {
 			try {
 				this.wait(time);} catch (InterruptedException e){}
 		}
