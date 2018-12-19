@@ -38,39 +38,46 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public <T> void subscribeEvent(Class<? extends Event<T>> type, MicroService m) {
-        synchronized (type){
-        LinkedBlockingQueue<MicroService> q;
-        if (!this.eventToMicrosSrviceQueue.containsKey(type)) {
-            q = new LinkedBlockingQueue<>();
-            this.eventToMicrosSrviceQueue.put(type, q);
-        } else
-            q = this.eventToMicrosSrviceQueue.get(type);
-        synchronized (q){
-        try {
-            q.put(m);
-        } catch (InterruptedException e) {
-        }}
-        microServiceToSubscribedEvents.get(m).add(type);
-    }}
+        synchronized (type) {
+            LinkedBlockingQueue<MicroService> q;
+            if (!this.eventToMicrosSrviceQueue.containsKey(type)) {
+                q = new LinkedBlockingQueue<>();
+                this.eventToMicrosSrviceQueue.put(type, q);
+            } else
+                q = this.eventToMicrosSrviceQueue.get(type);
+            synchronized (q) {
+                try {
+                    q.put(m);
+                } catch (InterruptedException e) {
+                }
+            }
+            microServiceToSubscribedEvents.get(m).add(type);
+
+        }
+    }
 
     @Override
     public void subscribeBroadcast(Class<? extends Broadcast> type, MicroService m) {
-        synchronized (type){
-        List<MicroService> l;
-        if (!this.broadcastToMicroServiceList.containsKey(type)) {
-            l = new LinkedList<>();
-            this.broadcastToMicroServiceList.put(type, l);
-        } else
-            l = this.broadcastToMicroServiceList.get(type);
-        synchronized (l){
-        l.add(m);
-        microServiceToSubscribedBroadcasts.get(m).add(type);
-    }}}
+        synchronized (type) {
+            List<MicroService> l;
+            if (!this.broadcastToMicroServiceList.containsKey(type)) {
+                l = new LinkedList<>();
+                this.broadcastToMicroServiceList.put(type, l);
+            } else
+                l = this.broadcastToMicroServiceList.get(type);
+            synchronized (l) {
+                l.add(m);
+            }
+            microServiceToSubscribedBroadcasts.get(m).add(type);
+        }
+    }
 
     @Override
-    public synchronized <T> void complete(Event<T> e, T result) {
-        Future f = eventToFuture.get(e);
-        f.resolve(result);
+    public <T> void complete(Event<T> e, T result) {
+        synchronized (eventToFuture) {
+            Future f = eventToFuture.get(e);
+            f.resolve(result);
+        }
     }
 
     @Override
@@ -100,7 +107,9 @@ public class MessageBusImpl implements MessageBus {
                 return null;
             }
             Future f = new Future();
-            eventToFuture.put(e, f);
+            synchronized (eventToFuture) {
+                eventToFuture.put(e, f);
+            }
             MicroService m = microServiceQueue.poll();
             LinkedBlockingQueue<Message> messageQueue = serviceToMessageQueue.get(m);
             try {
@@ -140,17 +149,17 @@ public class MessageBusImpl implements MessageBus {
             }
         }
         LinkedBlockingQueue<Message> leftovers = serviceToMessageQueue.get(m);
-        synchronized (leftovers){
-        while (!leftovers.isEmpty()) {
-            Message mess = null;
-            try {
-                mess = leftovers.take();
-            } catch (InterruptedException e) {
+        synchronized (leftovers) {
+            while (!leftovers.isEmpty()) {
+                Message mess = null;
+                try {
+                    mess = leftovers.take();
+                } catch (InterruptedException e) {
+                }
+                m.complete((Event) mess, null);
             }
-            m.complete((Event) mess, null);
+            serviceToMessageQueue.remove(m);
         }
-        serviceToMessageQueue.remove(m);}
-        System.out.println(m.getName() + " unregistered from bus");
     }
 
     @Override

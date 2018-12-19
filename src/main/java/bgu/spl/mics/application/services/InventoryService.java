@@ -36,6 +36,9 @@ public class InventoryService extends MicroService{
 				if (o == OrderResult.SUCCESSFULLY_TAKEN) {
 					complete(event, price);
 				}
+				else{
+					complete(event,-1);
+				}
 			}
 			else{
 				complete(event,-1);}

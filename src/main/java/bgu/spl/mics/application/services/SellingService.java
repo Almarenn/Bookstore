@@ -62,11 +62,13 @@ public class SellingService extends MicroService{
 				}
 				else{
 					complete(event,null);
+					c.getAvailable().release();
 				}}
 			else{
 				complete(event,null);
-			}
 				c.getAvailable().release();
+			}
+
 	});
 		subscribeBroadcast(TerminateBroadcast.class, broadcast->terminate());
 		d.countDown();
